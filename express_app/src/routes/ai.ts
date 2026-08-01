@@ -98,6 +98,14 @@ router.post('/configure', verifyToken, async (req: AuthRequest, res: Response) =
             validatedModules.push('employee_hr');
         }
 
+        // Ensure kitchen_kot and table_order_mgmt are bundled together
+        if (validatedModules.includes('kitchen_kot') && !validatedModules.includes('table_order_mgmt')) {
+            validatedModules.push('table_order_mgmt');
+        }
+        if (validatedModules.includes('table_order_mgmt') && !validatedModules.includes('kitchen_kot')) {
+            validatedModules.push('kitchen_kot');
+        }
+
         aiConfig.modules = validatedModules;
 
         return res.json(aiConfig);
