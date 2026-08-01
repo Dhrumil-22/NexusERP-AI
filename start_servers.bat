@@ -1,0 +1,13 @@
+@echo off
+echo Starting Anti Nexus ERP...
+
+echo Starting Django Backend...
+start cmd /k "cd forged && ..\.venv\Scripts\activate && python manage.py runserver"
+
+echo Starting Express Server...
+start cmd /k "cd express_app && npm run dev"
+
+echo Starting React Frontend...
+start cmd /k "cd frontend && npm run dev"
+
+echo All servers are starting up in separate windows!
