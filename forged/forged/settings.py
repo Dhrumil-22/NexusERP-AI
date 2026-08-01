@@ -96,14 +96,15 @@ WSGI_APPLICATION = 'forged.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+import dj_database_url
+import os
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        'OPTIONS': {
-            'timeout': 20,
-        }
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL', 'sqlite:///' + str(BASE_DIR / 'db.sqlite3')),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 
@@ -172,5 +173,7 @@ SIMPLE_JWT = {
 # MongoEngine Global Connection
 import mongoengine
 import sys
+import os
 if 'test' not in sys.argv:
-    mongoengine.connect('forged_db', host='localhost')
+    mongo_uri = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/forged_db')
+    mongoengine.connect(host=mongo_uri)
