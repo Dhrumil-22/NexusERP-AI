@@ -13,22 +13,15 @@ Because free servers delete local files on restart, you must move your databases
    - Under "Database Access", create a username and password.
    - Under "Network Access", allow access from anywhere (`0.0.0.0/0`).
    - Click "Connect" -> "Drivers" and copy your connection string (it looks like `mongodb+srv://<user>:<pass>@cluster...`). Save this for later.
-
-   dhrumilvaghela22_db_user : t6PuI9o50DDZ001M
-   mongodb+srv://dhrumilvaghela22_db_user:<t6PuI9o50DDZ001M>@nexuserp.wlkelu4.mongodb.net/?appName=NexusERP
-
 2. **Redis (For Sockets):**
    - Go to [Upstash](https://upstash.com/) and create a free account.
    - Create a Redis database.
    - Scroll down to find the `REDIS_URL` connection string. Save this.
 
-   UPSTASH_REDIS_REST_URL="https://usable-fly-117759.upstash.io"
-
 3. **PostgreSQL (To replace SQLite for Django):**
    - Go to [Neon.tech](https://neon.tech/) and create a free account.
    - Create a new project/database.
    - Copy the PostgreSQL connection string. Save this.
-postgresql://neondb_owner:npg_j6gGZEK2Fdkz@ep-winter-flower-ax4kw0g0.c-4.us-east-2.aws.neon.tech/neondb?sslmode=require
 ---
 
 ## Phase 2: Update Your Code for Production
@@ -68,6 +61,7 @@ You need to make a few code changes so your apps know they are in the cloud, not
 *Push all these changes to your GitHub repository before moving to Phase 3.*
 
 ---
+GEMINI_API_KEY : <YOUR_GEMINI_API_KEY_HERE>
 
 ## Phase 3: Deploy the Backends (Render.com)
 1. Go to [Render.com](https://render.com/) and link your GitHub account.
@@ -79,6 +73,7 @@ You need to make a few code changes so your apps know they are in the cloud, not
    - **Start Command:** `gunicorn forged.wsgi:application`
    - **Environment Variables:** Add `DATABASE_URL` and paste your Neon PostgreSQL string.
    - Click **Create**. Render will give you a live URL (e.g., `https://nexus-django.onrender.com`).
+   https://nexuserp-ai.onrender.com
 3. **Deploy Express:**
    - Click "New" -> "Web Service".
    - Select your GitHub repository.
@@ -87,6 +82,7 @@ You need to make a few code changes so your apps know they are in the cloud, not
    - **Start Command:** `npm start`
    - **Environment Variables:** Add `MONGODB_URI` (from Atlas), `REDIS_URL` (from Upstash), and `GEMINI_API_KEY`.
    - Click **Create**. Render will give you a live URL (e.g., `https://nexus-express.onrender.com`).
+   https://nexuserp-ai-express.onrender.com
 
 ---
 

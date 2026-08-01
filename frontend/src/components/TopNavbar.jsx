@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { cn } from "../lib/utils";
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://nexuserp-ai.onrender.com";
 
 export function TopNavbar({
   toggleSidebar,

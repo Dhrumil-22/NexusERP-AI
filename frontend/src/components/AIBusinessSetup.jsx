@@ -18,8 +18,8 @@ import {
 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
-const EXPRESS_API = "http://127.0.0.1:3001";
-const DJANGO_API = "http://127.0.0.1:8000";
+const EXPRESS_API = "https://nexuserp-ai-express.onrender.com";
+const DJANGO_API = "https://nexuserp-ai.onrender.com";
 
 export function AIBusinessSetup() {
   const [step, setStep] = useState(1);

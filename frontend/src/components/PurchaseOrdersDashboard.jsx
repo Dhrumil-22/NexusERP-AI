@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { FileText, PlusCircle, PackageCheck, Clock } from "lucide-react";
 import { CustomSelect } from "./CustomSelect";
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://nexuserp-ai.onrender.com";
 
 export function PurchaseOrdersDashboard() {
   const { token, themeColor } = useAuth();

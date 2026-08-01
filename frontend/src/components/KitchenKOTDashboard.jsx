@@ -3,7 +3,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { UtensilsCrossed, ChefHat, CheckCircle2, Clock } from "lucide-react";
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://nexuserp-ai.onrender.com";
 
 export function KitchenKOTDashboard() {
   const { token, themeColor } = useAuth();

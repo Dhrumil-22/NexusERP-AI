@@ -12,7 +12,7 @@ import {
 import { CustomSelect } from "./CustomSelect";
 import { useCurrentUser } from "../hooks/useCurrentUser";
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://nexuserp-ai.onrender.com";
 
 export function AttendanceDashboard() {
   const { token, themeColor, role } = useAuth();

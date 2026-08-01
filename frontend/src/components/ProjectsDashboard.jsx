@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { Kanban, Plus, Clock } from "lucide-react";
 import { CustomSelect } from "./CustomSelect";
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://nexuserp-ai.onrender.com";
 
 export function ProjectsDashboard() {
   const { token, themeColor } = useAuth();
