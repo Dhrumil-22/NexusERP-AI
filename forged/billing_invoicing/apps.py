@@ -8,8 +8,6 @@ class BillingInvoicingConfig(AppConfig):
     def ready(self):
         import billing_invoicing.signals
         
-        if 'runserver' not in sys.argv and 'test' not in sys.argv:
-            return
 
         from module_registry.models import ModuleDefinition as ModuleManifest
         

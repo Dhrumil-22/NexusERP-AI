@@ -6,8 +6,6 @@ class EmployeeHrConfig(AppConfig):
     name = 'employee_hr'
 
     def ready(self):
-        if 'runserver' not in sys.argv and 'test' not in sys.argv:
-            return
 
         from module_registry.models import ModuleDefinition as ModuleManifest
         

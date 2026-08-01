@@ -6,8 +6,6 @@ class PurchaseOrdersConfig(AppConfig):
     name = 'purchase_orders'
 
     def ready(self):
-        if 'runserver' not in sys.argv and 'test' not in sys.argv:
-            return
 
         import purchase_orders.signals
 

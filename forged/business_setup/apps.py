@@ -6,8 +6,6 @@ class BusinessSetupConfig(AppConfig):
     name = 'business_setup'
 
     def ready(self):
-        if 'runserver' not in sys.argv:
-            return
 
         from module_registry.models import ModuleDefinition as ModuleManifest
         

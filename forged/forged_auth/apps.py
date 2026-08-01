@@ -6,8 +6,6 @@ class ForgedAuthConfig(AppConfig):
     name = 'forged_auth'
 
     def ready(self):
-        if 'runserver' not in sys.argv and 'test' not in sys.argv:
-            return
 
         from module_registry.models import ModuleDefinition as ModuleManifest
         

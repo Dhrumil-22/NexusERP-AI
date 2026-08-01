@@ -8,8 +8,6 @@ class CustomersConfig(AppConfig):
     def ready(self):
         import customers.signals
         
-        if 'runserver' not in sys.argv and 'test' not in sys.argv:
-            return
 
         from module_registry.models import ModuleDefinition as ModuleManifest
         

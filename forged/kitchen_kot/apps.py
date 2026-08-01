@@ -6,8 +6,6 @@ class KitchenKotConfig(AppConfig):
     name = 'kitchen_kot'
 
     def ready(self):
-        if 'runserver' not in sys.argv and 'test' not in sys.argv:
-            return
 
         import kitchen_kot.signals
 

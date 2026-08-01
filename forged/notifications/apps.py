@@ -6,8 +6,6 @@ class NotificationsConfig(AppConfig):
     name = 'notifications'
 
     def ready(self):
-        if 'runserver' not in sys.argv and 'test' not in sys.argv:
-            return
 
         import notifications.signals
 

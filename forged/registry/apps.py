@@ -7,8 +7,6 @@ class RegistryConfig(AppConfig):
 
     def ready(self):
         import sys
-        if 'runserver' not in sys.argv:
-            return
 
         from .models import ModuleManifest
         

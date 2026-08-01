@@ -6,8 +6,6 @@ class ForgedPermissionsConfig(AppConfig):
     name = 'forged_permissions'
 
     def ready(self):
-        if 'runserver' not in sys.argv and 'test' not in sys.argv:
-            return
 
         import forged_permissions.signals
 
