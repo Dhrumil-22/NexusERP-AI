@@ -62,7 +62,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 
             if target_email:
                 business_name = request.user.business.name
-                sender_email = request.user.email or settings.DEFAULT_FROM_EMAIL
+                custom_from = request.data.get('from_email')
+                sender_email = custom_from or request.user.email or settings.DEFAULT_FROM_EMAIL
                 subject = f"Invoice {invoice.id} from {business_name}"
                 
                 customer_name = customer.first_name if customer else "Customer"
@@ -85,7 +86,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 html_content += f"<p><b>Status:</b> {invoice.status.capitalize()}</p>"
                 html_content += f"<br><p>Thank you for choosing <b>{business_name}</b>!</p>"
                 
-                from_header = f"{business_name} <{settings.DEFAULT_FROM_EMAIL}>"
+                # Use custom from_email in the from header if provided, otherwise default
+                from_header = f"{business_name} <{sender_email}>" if custom_from else f"{business_name} <{settings.DEFAULT_FROM_EMAIL}>"
                 msg = EmailMultiAlternatives(
                     subject,
                     text_content,

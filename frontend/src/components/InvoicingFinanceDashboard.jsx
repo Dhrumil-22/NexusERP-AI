@@ -41,6 +41,7 @@ export function InvoicingFinanceDashboard() {
   // Email Modal
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [emailInput, setEmailInput] = useState("");
+  const [fromEmailInput, setFromEmailInput] = useState("");
   const [isNewEmail, setIsNewEmail] = useState(false);
 
   const fetchData = async () => {
@@ -108,7 +109,7 @@ export function InvoicingFinanceDashboard() {
     try {
       await axios.post(
         `${API_BASE}/api/billing/invoices/${selectedInvoice.id}/send_email/`,
-        { email: emailInput },
+        { email: emailInput, from_email: fromEmailInput },
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -493,6 +494,7 @@ export function InvoicingFinanceDashboard() {
                   const cust = customers.find((c) => String(c.id) === String(selectedInvoice.customer_id));
                   setEmailInput(cust?.email || "");
                   setIsNewEmail(!cust?.email);
+                  setFromEmailInput("");
                   setShowEmailModal(true);
                 }}
                 className="w-full py-3 mt-3 rounded-xl border border-border/50 bg-muted/20 font-bold transition-colors hover:bg-muted/40 flex items-center justify-center gap-2"
@@ -597,7 +599,19 @@ export function InvoicingFinanceDashboard() {
             <div className="p-6 space-y-4">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-muted-foreground uppercase">
-                  Recipient Email
+                  From Email (Sender)
+                </label>
+                <input
+                  type="email"
+                  value={fromEmailInput}
+                  onChange={(e) => setFromEmailInput(e.target.value)}
+                  placeholder="Optional: Enter sender email"
+                  className="w-full px-3 py-2 bg-muted/30 border border-border/50 rounded-lg focus:outline-none"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-muted-foreground uppercase">
+                  To Email (Recipient)
                 </label>
                 <div className="flex gap-2 items-center">
                   {isNewEmail ? (
