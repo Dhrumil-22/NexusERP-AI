@@ -141,30 +141,41 @@ class OrderViewSet(viewsets.ModelViewSet):
         send_email = request.data.get('send_email', False)
         if send_email and order.customer_id:
             try:
-                from django.core.mail import send_mail
+                from django.core.mail import EmailMultiAlternatives
                 from django.conf import settings
                 from customers.models import Customer
                 
                 customer = Customer.objects.for_tenant(order.tenant_id).filter(id=order.customer_id).first()
                 if customer and customer.email:
-                    subject = f"Receipt from {request.user.business.name}"
-                    message = f"Thank you for your visit, {customer.first_name}!\n\nYour total bill was ₹{total:.2f}.\n\n"
+                    business_name = request.user.business.name
+                    sender_email = request.user.email or settings.DEFAULT_FROM_EMAIL
+                    subject = f"Receipt from {business_name}"
+                    
+                    text_content = f"Thank you for your visit, {customer.first_name}!\n\nYour total bill was ₹{total:.2f}.\n\n"
+                    html_content = f"<h3>Thank you for your visit, {customer.first_name}!</h3><p>Your total bill was <b>₹{total:.2f}</b>.</p><table style='width:100%; border-collapse: collapse; margin-bottom: 20px;'><tr style='border-bottom: 2px solid #ddd; text-align: left;'><th>Item</th><th>Qty</th><th>Price</th></tr>"
                     
                     for item in order.items.all():
                         product = Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first()
                         unit_price = product.price if product else 0.00
-                        message += f"- {item.quantity}x {item.product_id} @ ₹{unit_price:.2f} each\n"
+                        text_content += f"- {item.quantity}x {item.product_id} @ ₹{unit_price:.2f} each\n"
+                        html_content += f"<tr style='border-bottom: 1px solid #eee;'><td>{item.product_id}</td><td>{item.quantity}</td><td>₹{unit_price:.2f}</td></tr>"
                         
-                    message += f"\nTotal: ₹{total:.2f}\n"
-                    message += f"\nThank you for choosing {request.user.business.name}!\n"
+                    text_content += f"\nTotal: ₹{total:.2f}\n"
+                    text_content += f"\nThank you for choosing {business_name}!\n"
                     
-                    send_mail(
-                        subject, 
-                        message, 
-                        settings.DEFAULT_FROM_EMAIL, 
+                    html_content += f"</table><p><b>Total:</b> <span style='font-size: 18px; color: #3b82f6;'>₹{total:.2f}</span></p>"
+                    html_content += f"<br><p>Thank you for choosing <b>{business_name}</b>!</p>"
+                    
+                    from_header = f"{business_name} <{settings.DEFAULT_FROM_EMAIL}>"
+                    msg = EmailMultiAlternatives(
+                        subject,
+                        text_content,
+                        from_header,
                         [customer.email],
-                        fail_silently=True
+                        reply_to=[sender_email]
                     )
+                    msg.attach_alternative(html_content, "text/html")
+                    msg.send(fail_silently=True)
             except Exception as e:
                 import logging
                 logging.error(f"Failed to send email: {e}")
