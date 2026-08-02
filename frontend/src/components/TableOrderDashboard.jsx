@@ -31,15 +31,21 @@ export function TableOrderDashboard() {
     setIsFetching(true);
     try {
       const [tRes, oRes, pRes, cRes] = await Promise.all([
-        axios.get(`${API_BASE}/api/tables/tables/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get(`${API_BASE}/api/tables/orders/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get(`${API_BASE}/api/inventory/products/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        axios
+          .get(`${API_BASE}/api/tables/tables/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .catch(() => ({ data: [] })),
+        axios
+          .get(`${API_BASE}/api/tables/orders/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .catch(() => ({ data: [] })),
+        axios
+          .get(`${API_BASE}/api/inventory/products/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .catch(() => ({ data: [] })),
         axios
           .get(`${API_BASE}/api/customers/customers/`, {
             headers: { Authorization: `Bearer ${token}` },

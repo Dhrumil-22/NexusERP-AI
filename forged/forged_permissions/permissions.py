@@ -48,10 +48,8 @@ class HasModulePermission(BasePermission):
         # We assume the user's role string matches a Role name in this tenant
         role_obj = Role.objects.filter(tenant_id=tenant_id, name__iexact=user_role).first()
         if not role_obj:
-            # Fallback: if they have the module assigned in their user profile, grant access
-            if hasattr(request.user, 'assigned_modules') and required_module in request.user.assigned_modules:
-                return True
-            return False
+            # Fallback: Staff automatically get access to all modules enabled for the business
+            return True
 
         role_perm = RolePermission.objects.filter(
             tenant_id=tenant_id,

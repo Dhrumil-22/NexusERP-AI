@@ -70,13 +70,8 @@ function Layout() {
   }
 
   // Filter modules based on role
+  // As requested, all modules are synced between owner and staff
   let visibleManifests = manifests;
-  if (role !== "Admin" && currentUser) {
-    const assigned = currentUser.assigned_modules || [];
-    // Employees always have access to auth and notifications implicitly
-    const allowed = new Set([...assigned, "auth", "notifications"]);
-    visibleManifests = manifests.filter((m) => allowed.has(m.module_id));
-  }
 
   const functionalManifests = visibleManifests.filter(
     (m) =>
