@@ -121,7 +121,11 @@ export function InvoicingFinanceDashboard() {
         (c) => String(c.id) === String(selectedInvoice.customer_id),
       )?.name || "Unknown";
     const printIframe = document.createElement("iframe");
-    printIframe.style.display = "none";
+    printIframe.style.position = "absolute";
+    printIframe.style.top = "-9999px";
+    printIframe.style.left = "-9999px";
+    printIframe.style.width = "0";
+    printIframe.style.height = "0";
     document.body.appendChild(printIframe);
     const linesHtml = (selectedInvoice.lines || [])
       .map(

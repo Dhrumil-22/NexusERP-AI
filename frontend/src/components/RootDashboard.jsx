@@ -164,7 +164,7 @@ export function RootDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Today's Revenue"
-          value={`$${revenue?.total_revenue?.toFixed(2) || "0.00"}`}
+          value={`₹${revenue?.total_revenue?.toFixed(2) || "0.00"}`}
           icon={<TrendingUp className="w-5 h-5" />}
           themeColor={themeColor}
         />

@@ -167,7 +167,7 @@ function WidgetRenderer({ moduleId, widget, themeColor }) {
             </div>
             <div className="text-4xl font-bold tracking-tight">
               {data?.total_revenue
-                ? `$${parseFloat(data.total_revenue).toFixed(2)}`
+                ? `₹${parseFloat(data.total_revenue).toFixed(2)}`
                 : data?.value || 0}
             </div>
           </div>
