@@ -16,7 +16,7 @@ import { CustomSelect } from "./CustomSelect";
 import { API_BASE } from "../config";
 
 export function BillingDashboard() {
-  const { token, themeColor } = useAuth();
+  const { token, themeColor , showStatus } = useAuth();
   const [invoices, setInvoices] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
@@ -297,7 +297,7 @@ function InvoiceModal({ onClose, onSuccess }) {
       onSuccess();
     } catch (err) {
       console.error(err);
-      alert("Failed to create invoice");
+      showStatus("Error", "Failed to create invoice", "error");
     } finally {
       setLoading(false);
     }
@@ -548,7 +548,7 @@ function PaymentModal({ invoice, onClose, onSuccess }) {
       onSuccess();
     } catch (err) {
       console.error(err);
-      alert("Failed to record payment");
+      showStatus("Error", "Failed to record payment", "error");
     } finally {
       setLoading(false);
     }

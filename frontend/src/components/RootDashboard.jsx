@@ -25,7 +25,7 @@ import { CustomSelect } from "./CustomSelect";
 import { API_BASE } from "../config";
 
 export function RootDashboard() {
-  const { token, businessId, themeColor, businessName, role } = useAuth();
+  const { token, businessId, themeColor, businessName, role , showStatus } = useAuth();
   const [reportPeriod, setReportPeriod] = useState("daily");
 
   const headers = { Authorization: `Bearer ${token}` };
@@ -105,7 +105,7 @@ export function RootDashboard() {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error downloading report", error);
-      alert("Failed to download report. Please ensure you have permission.");
+      showStatus("Error", "Failed to download report. Please ensure you have permission.", "error");
     }
   };
 

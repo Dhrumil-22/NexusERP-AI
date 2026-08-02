@@ -73,6 +73,13 @@ export function AuthProvider({ children }) {
   );
   const [role, setRole] = useState(localStorage.getItem("role"));
 
+  // Global Status Modal State
+  const [statusMessage, setStatusMessage] = useState(null);
+  
+  const showStatus = (title, message, type) => {
+    setStatusMessage({ title, message, type });
+  };
+
   // Apply theme to document
   React.useEffect(() => {
     if (themeMode === "dark") {
@@ -249,6 +256,10 @@ export function AuthProvider({ children }) {
         themeColor,
         themeMode,
         role,
+        setRole,
+        statusMessage,
+        setStatusMessage,
+        showStatus,
         toggleThemeMode,
         login,
         logout,

@@ -7,7 +7,7 @@ import { CustomSelect } from "./CustomSelect";
 import { API_BASE } from "../config";
 
 export function PurchaseOrdersDashboard() {
-  const { token, themeColor } = useAuth();
+  const { token, themeColor , showStatus } = useAuth();
   const [purchaseOrders, setPurchaseOrders] = useState([]);
   const [products, setProducts] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
@@ -252,7 +252,7 @@ function StatCard({ title, value, icon, themeColor, alert = false }) {
 }
 
 function CreatePOModal({ products, onClose, onSuccess }) {
-  const { token, themeColor } = useAuth();
+  const { token, themeColor , showStatus } = useAuth();
   const [supplierId, setSupplierId] = useState("");
   const [status, setStatus] = useState("draft");
   const [lines, setLines] = useState([
@@ -292,7 +292,7 @@ function CreatePOModal({ products, onClose, onSuccess }) {
       onSuccess();
     } catch (err) {
       console.error(err);
-      alert("Failed to draft Purchase Order");
+      showStatus("Error", "Failed to draft Purchase Order", "error");
     } finally {
       setLoading(false);
     }
@@ -439,7 +439,7 @@ function CreatePOModal({ products, onClose, onSuccess }) {
 }
 
 function ReceivePOModal({ po, products, onClose, onSuccess }) {
-  const { token, themeColor } = useAuth();
+  const { token, themeColor , showStatus } = useAuth();
   const [loading, setLoading] = useState(false);
   // Track quantities we are receiving now
   const [receiveData, setReceiveData] = useState(
@@ -473,7 +473,7 @@ function ReceivePOModal({ po, products, onClose, onSuccess }) {
       onSuccess();
     } catch (err) {
       console.error(err);
-      alert("Failed to receive stock");
+      showStatus("Error", "Failed to receive stock", "error");
     } finally {
       setLoading(false);
     }

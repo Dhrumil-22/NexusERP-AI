@@ -8,7 +8,7 @@ import { CustomSelect } from "./CustomSelect";
 import { API_BASE } from "../config";
 
 export function TableOrderDashboard() {
-  const { token, themeColor } = useAuth();
+  const { token, themeColor , showStatus } = useAuth();
   const navigate = useNavigate();
   const [tables, setTables] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -106,7 +106,7 @@ export function TableOrderDashboard() {
       navigate("/module/invoicing_finance?tab=bill");
     } catch (err) {
       console.error(err);
-      alert("Failed to collect payment or order already paid.");
+      showStatus("Error", "Failed to collect payment or order already paid.", "error");
     } finally {
       setIsPaying(false);
     }
@@ -134,7 +134,7 @@ export function TableOrderDashboard() {
       fetchData();
     } catch (err) {
       console.error(err);
-      alert("Failed to add item");
+      showStatus("Error", "Failed to add item", "error");
     }
   };
 
@@ -150,7 +150,7 @@ export function TableOrderDashboard() {
       fetchData();
     } catch (err) {
       console.error(err);
-      alert("Failed to delete item");
+      showStatus("Error", "Failed to delete item", "error");
     }
   };
 
@@ -164,7 +164,7 @@ export function TableOrderDashboard() {
       fetchData();
     } catch (err) {
       console.error(err);
-      alert("Failed to send to kitchen");
+      showStatus("Error", "Failed to send to kitchen", "error");
     }
   };
 
@@ -179,7 +179,7 @@ export function TableOrderDashboard() {
       fetchData();
     } catch (err) {
       console.error(err);
-      alert("Failed to close table.");
+      showStatus("Error", "Failed to close table.", "error");
     }
   };
 
@@ -194,7 +194,7 @@ export function TableOrderDashboard() {
       fetchData();
     } catch (err) {
       console.error(err);
-      alert("Failed to change customer.");
+      showStatus("Error", "Failed to change customer.", "error");
     }
   };
 
@@ -209,7 +209,7 @@ export function TableOrderDashboard() {
       fetchData();
     } catch (err) {
       console.error(err);
-      alert("Failed to add table");
+      showStatus("Error", "Failed to add table", "error");
     }
   };
 

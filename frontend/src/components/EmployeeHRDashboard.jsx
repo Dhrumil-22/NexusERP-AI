@@ -15,7 +15,7 @@ import { CustomSelect } from "./CustomSelect";
 import { API_BASE } from "../config";
 
 export function EmployeeHRDashboard() {
-  const { token, themeColor } = useAuth();
+  const { token, themeColor , showStatus } = useAuth();
   const [employees, setEmployees] = useState([]);
   const [roles, setRoles] = useState([]);
   const [shifts, setShifts] = useState([]);
@@ -139,7 +139,7 @@ export function EmployeeHRDashboard() {
       const errorMsg = err.response?.data?.username
         ? `Error: ${err.response.data.username}`
         : `Failed to ${isEditing ? "update" : "add"} employee`;
-      alert(errorMsg);
+      showStatus("Error", errorMsg, "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -172,7 +172,7 @@ export function EmployeeHRDashboard() {
       fetchData();
     } catch (err) {
       console.error(err);
-      alert("Failed to delete employee");
+      showStatus("Error", "Failed to delete employee", "error");
     }
   };
 
@@ -191,7 +191,7 @@ export function EmployeeHRDashboard() {
       setNewRoleName("");
     } catch (err) {
       console.error(err);
-      alert("Failed to create role");
+      showStatus("Error", "Failed to create role", "error");
     }
   };
 

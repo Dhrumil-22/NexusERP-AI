@@ -6,7 +6,7 @@ import { User, Building, Mail, Shield, Camera, Key } from "lucide-react";
 import { API_BASE } from "../config";
 
 export function SecurityDashboard() {
-  const { token, themeColor, businessName, logoUrl } = useAuth();
+  const { token, themeColor, businessName, logoUrl , showStatus } = useAuth();
   const [uploading, setUploading] = useState(false);
   const [user, setUser] = useState(null);
   const fileInputRef = useRef(null);
@@ -45,7 +45,7 @@ export function SecurityDashboard() {
       await fetchMe(); // refresh user data to get new avatar URL
     } catch (err) {
       console.error("Failed to upload avatar", err);
-      alert("Failed to upload avatar.");
+      showStatus("Error", "Failed to upload avatar.", "error");
     } finally {
       setUploading(false);
     }
@@ -243,11 +243,11 @@ function PasswordManagement({ themeColor }) {
         { new_password: newPassword },
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      alert("Password updated successfully!");
+      showStatus("Success", "Password updated successfully!", "success");
       setNewPassword("");
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.error || "Failed to update password");
+      showStatus("Error", err.response?.data?.error || "Failed to update password", "error");
     } finally {
       setLoading(false);
     }

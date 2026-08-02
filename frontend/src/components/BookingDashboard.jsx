@@ -7,7 +7,7 @@ import { CustomSelect } from "./CustomSelect";
 import { API_BASE } from "../config";
 
 export function BookingDashboard() {
-  const { token, themeColor } = useAuth();
+  const { token, themeColor , showStatus } = useAuth();
   const [slots, setSlots] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
@@ -214,7 +214,7 @@ export function BookingDashboard() {
 }
 
 function BookingModal({ availableSlots, onClose, onSuccess }) {
-  const { token, themeColor } = useAuth();
+  const { token, themeColor , showStatus } = useAuth();
   const [customerId, setCustomerId] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [selectedSlotId, setSelectedSlotId] = useState("");
@@ -222,7 +222,7 @@ function BookingModal({ availableSlots, onClose, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedSlotId) return alert("Please select a time slot.");
+    if (!selectedSlotId) return showStatus("Error", "Please select a time slot.", "error");
     setLoading(true);
     try {
       await axios.post(
@@ -237,7 +237,7 @@ function BookingModal({ availableSlots, onClose, onSuccess }) {
       onSuccess();
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.error || "Failed to book appointment");
+      showStatus("Error", err.response?.data?.error || "Failed to book appointment", "error");
     } finally {
       setLoading(false);
     }

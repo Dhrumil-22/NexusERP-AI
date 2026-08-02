@@ -14,7 +14,7 @@ import { CustomSelect } from "./CustomSelect";
 import { API_BASE } from "../config";
 
 export function InventoryDashboard() {
-  const { token, themeColor } = useAuth();
+  const { token, themeColor , showStatus } = useAuth();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
@@ -284,7 +284,7 @@ function ProductModal({ categories, onClose, onSuccess }) {
       onSuccess();
     } catch (err) {
       console.error(err);
-      alert("Failed to create product");
+      showStatus("Error", "Failed to create product", "error");
     } finally {
       setLoading(false);
     }
@@ -447,7 +447,7 @@ function AdjustStockModal({ product, onClose, onSuccess }) {
       onSuccess();
     } catch (err) {
       console.error(err);
-      alert("Failed to adjust stock");
+      showStatus("Error", "Failed to adjust stock", "error");
     } finally {
       setLoading(false);
     }

@@ -12,6 +12,7 @@ import { TopNavbar } from "./components/TopNavbar";
 import { DashboardEngine } from "./components/DashboardEngine";
 import { RootDashboard } from "./components/RootDashboard";
 import { SuperAdminDashboard } from "./components/SuperAdminDashboard";
+import { CheckCircle } from "lucide-react";
 import { FormEngine } from "./components/FormEngine";
 import { InventoryDashboard } from "./components/InventoryDashboard";
 import { CustomersDashboard } from "./components/CustomersDashboard";
@@ -263,22 +264,55 @@ function ModuleView({ manifests, token }) {
   );
 }
 
+function GlobalStatusModal() {
+  const { statusMessage, setStatusMessage } = useAuth();
+  if (!statusMessage) return null;
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-fade-in">
+      <div className="bg-card w-full max-w-sm rounded-2xl shadow-2xl border border-border/50 overflow-hidden text-center p-8">
+        {statusMessage.type === "success" ? (
+          <CheckCircle className="w-16 h-16 mx-auto mb-4" style={{ color: "#22c55e" }} />
+        ) : (
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center border-4 border-red-500 text-red-500">
+            <span className="font-bold text-2xl">!</span>
+          </div>
+        )}
+        <h2 className="text-xl font-bold mb-2">{statusMessage.title}</h2>
+        <p className="text-muted-foreground mb-6">{statusMessage.message}</p>
+        <button
+          onClick={() => setStatusMessage(null)}
+          className="w-full py-3 rounded-xl font-bold text-white transition-transform hover:scale-[1.02]"
+          style={{ backgroundColor: statusMessage.type === "success" ? "#22c55e" : "#ef4444" }}
+        >
+          Okay
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function AuthWrapper() {
   const { isAuthenticated } = useAuth();
   if (!isAuthenticated) {
     return (
-      <Routes>
-        <Route path="/" element={<HeroPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <>
+        <Routes>
+          <Route path="/" element={<HeroPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+        <GlobalStatusModal />
+      </>
     );
   }
   return (
-    <Routes>
-      <Route path="/setup" element={<AIBusinessSetup />} />
-      <Route path="/*" element={<Layout />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/setup" element={<AIBusinessSetup />} />
+        <Route path="/*" element={<Layout />} />
+      </Routes>
+      <GlobalStatusModal />
+    </>
   );
 }
 

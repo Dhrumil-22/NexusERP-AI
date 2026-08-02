@@ -15,7 +15,7 @@ import { useCurrentUser } from "../hooks/useCurrentUser";
 import { API_BASE } from "../config";
 
 export function AttendanceDashboard() {
-  const { token, themeColor, role } = useAuth();
+  const { token, themeColor, role , showStatus } = useAuth();
   const { data: currentUser } = useCurrentUser(token);
   const [records, setRecords] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -80,7 +80,7 @@ export function AttendanceDashboard() {
 
   const handleQuickAction = async (type) => {
     if (!staffEmployee)
-      return alert("Employee record not found. Please contact admin.");
+      return showStatus("Error", "Employee record not found. Please contact admin.", "error");
     try {
       const endpoint = type === "in" ? "clock_in" : "clock_out";
       const payload =
@@ -98,7 +98,7 @@ export function AttendanceDashboard() {
       fetchRecords();
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.error || `Failed to clock ${type}`);
+      showStatus("Error", err.response?.data?.error || `Failed to clock ${type}`, "error");
     }
   };
 
@@ -323,7 +323,7 @@ function ActionModal({ type, employees, todayRecords, onClose, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!employeeId) return alert("Please select an employee.");
+    if (!employeeId) return showStatus("Error", "Please select an employee.", "error");
     setLoading(true);
     try {
       const endpoint = type === "in" ? "clock_in" : "clock_out";
@@ -339,7 +339,7 @@ function ActionModal({ type, employees, todayRecords, onClose, onSuccess }) {
       onSuccess();
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.error || `Failed to clock ${type}`);
+      showStatus("Error", err.response?.data?.error || `Failed to clock ${type}`, "error");
     } finally {
       setLoading(false);
     }

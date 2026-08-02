@@ -7,7 +7,7 @@ import { CustomSelect } from "./CustomSelect";
 import { API_BASE } from "../config";
 
 export function ProjectsDashboard() {
-  const { token, themeColor } = useAuth();
+  const { token, themeColor , showStatus } = useAuth();
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -114,7 +114,7 @@ export function ProjectsDashboard() {
         description: "",
         date: new Date().toISOString().split("T")[0],
       });
-      alert("Time logged successfully!");
+      showStatus("Success", "Time logged successfully!", "success");
     } catch (err) {
       console.error(err);
     }

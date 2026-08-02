@@ -14,7 +14,7 @@ import {
 import { API_BASE } from "../config";
 
 export function BarcodeCatalogDashboard() {
-  const { token, themeColor } = useAuth();
+  const { token, themeColor , showStatus } = useAuth();
   const [variants, setVariants] = useState([]);
   const [stores, setStores] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
@@ -153,7 +153,7 @@ export function BarcodeCatalogDashboard() {
             </div>
             <button
               onClick={() =>
-                alert("Variants are created via the central Inventory module.")
+                showStatus("Success", "Variants are created via the central Inventory module.", "success")
               }
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
             >

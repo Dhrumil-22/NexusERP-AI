@@ -14,7 +14,7 @@ import {
 import { API_BASE } from "../config";
 
 export function CustomersDashboard() {
-  const { token, themeColor } = useAuth();
+  const { token, themeColor , showStatus } = useAuth();
   const [customers, setCustomers] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
@@ -271,7 +271,7 @@ function CustomerModal({ onClose, onSuccess }) {
       onSuccess();
     } catch (err) {
       console.error(err);
-      alert("Failed to create customer");
+      showStatus("Error", "Failed to create customer", "error");
     } finally {
       setLoading(false);
     }
@@ -388,7 +388,7 @@ function NotesModal({ customer, onClose, onSuccess }) {
       onSuccess();
     } catch (err) {
       console.error(err);
-      alert("Failed to add note");
+      showStatus("Error", "Failed to add note", "error");
     } finally {
       setLoading(false);
     }
@@ -476,7 +476,7 @@ function PointsModal({ customer, onClose, onSuccess }) {
       onSuccess();
     } catch (err) {
       console.error(err);
-      alert("Failed to adjust points");
+      showStatus("Error", "Failed to adjust points", "error");
     } finally {
       setLoading(false);
     }

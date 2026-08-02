@@ -8,7 +8,7 @@ import { CustomSelect } from "./CustomSelect";
 import { API_BASE } from "../config";
 
 export function SalesOrdersDashboard() {
-  const { token, themeColor } = useAuth();
+  const { token, themeColor , showStatus } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
@@ -119,7 +119,7 @@ export function SalesOrdersDashboard() {
       }
       navigate("/module/invoicing_finance");
     } catch (err) {
-      alert(err.response?.data?.error || "Failed to confirm order");
+      showStatus("Error", err.response?.data?.error || "Failed to confirm order", "error");
     } finally {
       setConfirmingId(null);
     }
