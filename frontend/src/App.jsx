@@ -64,7 +64,7 @@ function Layout() {
       </div>
     );
   if (!manifests) return null;
-  if (manifests.length === 0 && role === "Admin") {
+  if (manifests.length === 0 && role === "Admin" && businessName !== "Nexus AI Admin") {
     // If Admin user has 0 enabled modules, force them to the AI Setup screen
     return <Navigate to="/setup" replace />;
   }

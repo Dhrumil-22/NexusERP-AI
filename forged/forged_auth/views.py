@@ -157,7 +157,7 @@ class SuperAdminBusinessListView(APIView):
             data.append({
                 'business_id': str(b.business_id),
                 'name': b.name,
-                'logo': request.build_absolute_uri(b.logo.url) if b.logo else None,
+                'logo': b.logo_base64 if b.logo_base64 else (request.build_absolute_uri(b.logo.url) if b.logo else None),
                 'theme_color': b.theme_color,
                 'industry_tag': b.industry_tag,
                 'ai_prompt': b.ai_prompt or "Not recorded",
