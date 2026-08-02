@@ -8,6 +8,21 @@ class RegisterBusinessSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
     email = serializers.EmailField(required=False, allow_blank=True)
 
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("A user with that username already exists.")
+        return value
+
+    def validate_email(self, value):
+        if value and User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("A user with that email already exists.")
+        return value
+
+    def validate_business_name(self, value):
+        if Business.objects.filter(name=value).exists():
+            raise serializers.ValidationError("A business with that name already exists.")
+        return value
+
 class UserSerializer(serializers.ModelSerializer):
     business_name = serializers.CharField(source='business.name', read_only=True)
     business_owner_name = serializers.CharField(source='business.owner_name', read_only=True)
