@@ -43,6 +43,7 @@ export function InvoicingFinanceDashboard() {
   const [emailInput, setEmailInput] = useState("");
   const [fromEmailInput, setFromEmailInput] = useState("");
   const [isNewEmail, setIsNewEmail] = useState(false);
+  const [statusMessage, setStatusMessage] = useState(null);
 
   const fetchData = async () => {
     setIsFetching(true);
@@ -114,11 +115,11 @@ export function InvoicingFinanceDashboard() {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
-      alert("Email sent successfully!");
       setShowEmailModal(false);
+      setStatusMessage({ title: "Success", message: "Email sent successfully!", type: "success" });
     } catch (err) {
       console.error(err);
-      alert("Failed to send email. Check if customer has an email address.");
+      setStatusMessage({ title: "Error", message: "Failed to send email. Check if customer has an email address.", type: "error" });
     }
   };
 
@@ -665,6 +666,29 @@ export function InvoicingFinanceDashboard() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {statusMessage && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-card w-full max-w-sm rounded-2xl shadow-2xl border border-border/50 overflow-hidden text-center p-8">
+            {statusMessage.type === "success" ? (
+              <CheckCircle className="w-16 h-16 mx-auto mb-4" style={{ color: "#22c55e" }} />
+            ) : (
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center border-4 border-red-500 text-red-500">
+                <span className="font-bold text-2xl">!</span>
+              </div>
+            )}
+            <h2 className="text-xl font-bold mb-2">{statusMessage.title}</h2>
+            <p className="text-muted-foreground mb-6">{statusMessage.message}</p>
+            <button
+              onClick={() => setStatusMessage(null)}
+              className="w-full py-3 rounded-xl font-bold text-white transition-transform hover:scale-[1.02]"
+              style={{ backgroundColor: statusMessage.type === "success" ? "#22c55e" : "#ef4444" }}
+            >
+              Okay
+            </button>
           </div>
         </div>
       )}
