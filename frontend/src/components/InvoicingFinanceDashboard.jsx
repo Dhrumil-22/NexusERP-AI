@@ -38,6 +38,10 @@ export function InvoicingFinanceDashboard() {
     amount: "",
     payment_method: "Credit Card",
   });
+  // Email Modal
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailInput, setEmailInput] = useState("");
+  const [isNewEmail, setIsNewEmail] = useState(false);
 
   const fetchData = async () => {
     setIsFetching(true);
@@ -104,10 +108,13 @@ export function InvoicingFinanceDashboard() {
     try {
       await axios.post(
         `${API_BASE}/api/billing/invoices/${selectedInvoice.id}/send_email/`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { email: emailInput },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
       alert("Email sent successfully!");
+      setShowEmailModal(false);
     } catch (err) {
       console.error(err);
       alert("Failed to send email. Check if customer has an email address.");
@@ -482,7 +489,12 @@ export function InvoicingFinanceDashboard() {
               </button>
               
               <button
-                onClick={handleSendEmail}
+                onClick={() => {
+                  const cust = customers.find((c) => String(c.id) === String(selectedInvoice.customer_id));
+                  setEmailInput(cust?.email || "");
+                  setIsNewEmail(!cust?.email);
+                  setShowEmailModal(true);
+                }}
                 className="w-full py-3 mt-3 rounded-xl border border-border/50 bg-muted/20 font-bold transition-colors hover:bg-muted/40 flex items-center justify-center gap-2"
               >
                 Send Email Receipt
@@ -567,6 +579,78 @@ export function InvoicingFinanceDashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showEmailModal && selectedInvoice && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-card w-full max-w-sm rounded-2xl shadow-2xl border border-border/50 overflow-hidden">
+            <div
+              className="p-6 border-b border-border/50"
+              style={{ backgroundColor: `${themeColor}10` }}
+            >
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <FileText className="w-5 h-5" /> Enter Email
+              </h2>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-muted-foreground uppercase">
+                  Recipient Email
+                </label>
+                <div className="flex gap-2 items-center">
+                  {isNewEmail ? (
+                    <input
+                      type="email"
+                      value={emailInput}
+                      onChange={(e) => setEmailInput(e.target.value)}
+                      placeholder="Enter new email"
+                      className="flex-1 px-3 py-2 bg-muted/30 border border-border/50 rounded-lg focus:outline-none"
+                    />
+                  ) : (
+                    <CustomSelect
+                      value={emailInput}
+                      onChange={(e) => setEmailInput(e.target.value)}
+                      className="flex-1 px-3 py-2 bg-muted/30 border border-border/50 rounded-lg focus:outline-none"
+                    >
+                      <option value="">Select an email...</option>
+                      {Array.from(new Set(customers.map(c => c.email).filter(Boolean))).map(email => (
+                        <option key={email} value={email}>{email}</option>
+                      ))}
+                    </CustomSelect>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsNewEmail(!isNewEmail);
+                      setEmailInput("");
+                    }}
+                    className="p-2 border border-border/50 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors"
+                    title={isNewEmail ? "Select existing email" : "Enter new email"}
+                  >
+                    <Plus className={`w-5 h-5 ${isNewEmail ? 'rotate-45 transition-transform' : ''}`} />
+                  </button>
+                </div>
+              </div>
+              
+              <div className="pt-4 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowEmailModal(false)}
+                  className="flex-1 px-4 py-3 border border-border/50 rounded-xl font-bold text-muted-foreground hover:bg-muted/50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSendEmail}
+                  className="flex-1 px-4 py-3 rounded-xl font-bold text-white transition-transform hover:scale-[1.02]"
+                  style={{ backgroundColor: themeColor }}
+                >
+                  Send
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

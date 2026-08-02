@@ -55,14 +55,21 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             from customers.models import Customer
             
             customer = Customer.objects.for_tenant(invoice.tenant_id).filter(id=invoice.customer_id).first()
-            if customer and customer.email:
+            
+            target_email = request.data.get('email')
+            if not target_email and customer:
+                target_email = customer.email
+                
+            if target_email:
                 business_name = request.user.business.name
                 sender_email = request.user.email or settings.DEFAULT_FROM_EMAIL
                 subject = f"Invoice {invoice.id} from {business_name}"
                 
+                customer_name = customer.first_name if customer else "Customer"
+                
                 # Plain text version
-                text_content = f"Hello {customer.first_name},\n\nHere is your invoice/receipt for your recent visit.\n\n"
-                html_content = f"<h3>Hello {customer.first_name},</h3><p>Here is your invoice/receipt for your recent visit.</p><table style='width:100%; border-collapse: collapse; margin-bottom: 20px;'><tr style='border-bottom: 2px solid #ddd; text-align: left;'><th>Item</th><th>Qty</th><th>Price</th></tr>"
+                text_content = f"Hello {customer_name},\n\nHere is your invoice/receipt for your recent visit.\n\n"
+                html_content = f"<h3>Hello {customer_name},</h3><p>Here is your invoice/receipt for your recent visit.</p><table style='width:100%; border-collapse: collapse; margin-bottom: 20px;'><tr style='border-bottom: 2px solid #ddd; text-align: left;'><th>Item</th><th>Qty</th><th>Price</th></tr>"
                 
                 for line in invoice.lines.all():
                     text_content += f"- {line.quantity}x {line.description} @ ₹{line.unit_price:.2f} each\n"
@@ -83,7 +90,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                     subject,
                     text_content,
                     from_header,
-                    [customer.email],
+                    [target_email],
                     reply_to=[sender_email]
                 )
                 msg.attach_alternative(html_content, "text/html")
@@ -91,7 +98,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 
                 return Response({'status': 'email sent'})
             else:
-                return Response({'error': 'Customer has no email address on file.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Please provide an email address or associate a customer with one.'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class InvoiceLineViewSet(viewsets.ModelViewSet):

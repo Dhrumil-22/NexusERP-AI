@@ -139,20 +139,28 @@ class OrderViewSet(viewsets.ModelViewSet):
         
         # Send email if requested
         send_email = request.data.get('send_email', False)
-        if send_email and order.customer_id:
+        target_email = request.data.get('email')
+        
+        if send_email:
             try:
                 from django.core.mail import EmailMultiAlternatives
                 from django.conf import settings
                 from customers.models import Customer
                 
-                customer = Customer.objects.for_tenant(order.tenant_id).filter(id=order.customer_id).first()
-                if customer and customer.email:
+                customer = Customer.objects.for_tenant(order.tenant_id).filter(id=order.customer_id).first() if order.customer_id else None
+                
+                if not target_email and customer:
+                    target_email = customer.email
+                    
+                if target_email:
                     business_name = request.user.business.name
                     sender_email = request.user.email or settings.DEFAULT_FROM_EMAIL
                     subject = f"Receipt from {business_name}"
                     
-                    text_content = f"Thank you for your visit, {customer.first_name}!\n\nYour total bill was ₹{total:.2f}.\n\n"
-                    html_content = f"<h3>Thank you for your visit, {customer.first_name}!</h3><p>Your total bill was <b>₹{total:.2f}</b>.</p><table style='width:100%; border-collapse: collapse; margin-bottom: 20px;'><tr style='border-bottom: 2px solid #ddd; text-align: left;'><th>Item</th><th>Qty</th><th>Price</th></tr>"
+                    customer_name = customer.first_name if customer else "Customer"
+                    
+                    text_content = f"Thank you for your visit, {customer_name}!\n\nYour total bill was ₹{total:.2f}.\n\n"
+                    html_content = f"<h3>Thank you for your visit, {customer_name}!</h3><p>Your total bill was <b>₹{total:.2f}</b>.</p><table style='width:100%; border-collapse: collapse; margin-bottom: 20px;'><tr style='border-bottom: 2px solid #ddd; text-align: left;'><th>Item</th><th>Qty</th><th>Price</th></tr>"
                     
                     for item in order.items.all():
                         product = Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first()
@@ -171,7 +179,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                         subject,
                         text_content,
                         from_header,
-                        [customer.email],
+                        [target_email],
                         reply_to=[sender_email]
                     )
                     msg.attach_alternative(html_content, "text/html")
