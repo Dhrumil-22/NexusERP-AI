@@ -170,7 +170,7 @@ export function InventoryDashboard() {
                           </span>
                         </td>
                         <td className="px-4 py-4 text-right font-medium text-foreground">
-                          ${p.price}
+                          ₹{p.price}
                         </td>
                         <td
                           className={`px-4 py-4 text-right font-bold ${isLow ? "text-destructive" : "text-emerald-500"}`}
