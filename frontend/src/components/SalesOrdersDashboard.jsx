@@ -197,7 +197,7 @@ export function SalesOrdersDashboard() {
                         </span>
                       </td>
                       <td className="px-4 py-4 text-right font-mono font-bold">
-                        ${parseFloat(order.total).toFixed(2)}
+                        ₹{parseFloat(order.total).toFixed(2)}
                       </td>
                       <td className="px-4 py-4 text-center">
                         {order.status === "draft" && (
@@ -288,7 +288,7 @@ export function SalesOrdersDashboard() {
                     className="text-xl font-black font-mono"
                     style={{ color: themeColor }}
                   >
-                    ${parseFloat(selectedOrder.total).toFixed(2)}
+                    ₹{parseFloat(selectedOrder.total).toFixed(2)}
                   </span>
                 </div>
               </div>

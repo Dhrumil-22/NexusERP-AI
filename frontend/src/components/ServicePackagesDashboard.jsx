@@ -209,7 +209,7 @@ export function ServicePackagesDashboard() {
               <div className="flex justify-between items-start mb-2">
                 <h3 className="font-bold text-xl">{svc.name}</h3>
                 <span className="font-mono font-bold px-2 py-1 bg-muted/50 rounded-lg">
-                  ${parseFloat(svc.price).toFixed(2)}
+                  ₹{parseFloat(svc.price).toFixed(2)}
                 </span>
               </div>
               <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
@@ -286,11 +286,11 @@ export function ServicePackagesDashboard() {
                         className="font-mono font-bold text-xl"
                         style={{ color: themeColor }}
                       >
-                        ${parseFloat(pkg.package_price).toFixed(2)}
+                        ₹{parseFloat(pkg.package_price).toFixed(2)}
                       </div>
                       {origPrice > parseFloat(pkg.package_price) && (
                         <div className="text-xs text-muted-foreground line-through">
-                          ${origPrice.toFixed(2)}
+                          ₹{origPrice.toFixed(2)}
                         </div>
                       )}
                     </div>
@@ -428,7 +428,7 @@ export function ServicePackagesDashboard() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-muted-foreground uppercase">
-                    Price ($)
+                    Price (₹)
                   </label>
                   <input
                     type="number"
@@ -539,7 +539,7 @@ export function ServicePackagesDashboard() {
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-muted-foreground uppercase">
-                  Package Price ($)
+                  Package Price (₹)
                 </label>
                 <input
                   type="number"
@@ -577,7 +577,7 @@ export function ServicePackagesDashboard() {
                 >
                   {services.map((s) => (
                     <option key={s.id} value={s.id}>
-                      {s.name} (${s.price})
+                      {s.name} (₹{s.price})
                     </option>
                   ))}
                 </CustomSelect>
