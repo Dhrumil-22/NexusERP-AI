@@ -121,7 +121,8 @@ export function InvoicingFinanceDashboard() {
       setStatusMessage({ title: "Success", message: "Email sent successfully!", type: "success" });
     } catch (err) {
       console.error(err);
-      setStatusMessage({ title: "Error", message: "Failed to send email. Check if customer has an email address.", type: "error" });
+      const backendError = err.response?.data?.error || "Failed to send email. Check if customer has an email address.";
+      setStatusMessage({ title: "Error", message: backendError, type: "error" });
     } finally {
       setIsEmailing(false);
     }
