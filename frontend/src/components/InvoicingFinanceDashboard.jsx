@@ -120,11 +120,9 @@ export function InvoicingFinanceDashboard() {
       customers.find(
         (c) => String(c.id) === String(selectedInvoice.customer_id),
       )?.name || "Unknown";
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) {
-      alert("Please allow popups to generate PDFs.");
-      return;
-    }
+    const printIframe = document.createElement("iframe");
+    printIframe.style.display = "none";
+    document.body.appendChild(printIframe);
     const linesHtml = (selectedInvoice.lines || [])
       .map(
         (l) => `
@@ -208,13 +206,19 @@ export function InvoicingFinanceDashboard() {
           </div>
           
           <script>
-            window.onload = function() { setTimeout(function(){ window.print(); }, 500); }
+            setTimeout(function(){ window.focus(); window.print(); }, 500);
           </script>
         </body>
       </html>
     `;
-    printWindow.document.write(html);
-    printWindow.document.close();
+    printIframe.contentWindow.document.open();
+    printIframe.contentWindow.document.write(html);
+    printIframe.contentWindow.document.close();
+    
+    // Clean up the iframe after printing is done (or cancelled)
+    setTimeout(() => {
+      document.body.removeChild(printIframe);
+    }, 10000); // 10 seconds is usually enough for the print dialog to open and close
   };
 
   return (
