@@ -167,7 +167,7 @@ export function InvoicingFinanceDashboard() {
               </div>
               <h1>${selectedInvoice.document_type === "bill" ? "BILL" : "INVOICE"}</h1>
               <div class="meta-item"><strong>${selectedInvoice.document_type === "bill" ? "Bill" : "Invoice"} #:</strong> ${String(selectedInvoice.id).slice(0, 8).toUpperCase()}</div>
-              <div class="meta-item"><strong>Date:</strong> ${new Date(selectedInvoice.created_at).toLocaleDateString()}</div>
+              <div class="meta-item"><strong>Date:</strong> ${new Date(selectedInvoice.created_at).toLocaleDateString('en-GB').replace(/\//g, '-')}</div>
               <div class="meta-item"><strong>Status:</strong> ${selectedInvoice.status.toUpperCase()}</div>
             </div>
             <div style="text-align: right; margin-top: 10px;">
@@ -449,7 +449,7 @@ export function InvoicingFinanceDashboard() {
                         <div className="flex items-center gap-2">
                           <DollarSign className="w-3 h-3 text-muted-foreground" />
                           <span className="text-muted-foreground text-xs">
-                            {new Date(p.created_at).toLocaleDateString()}
+                            {new Date(p.created_at).toLocaleDateString('en-GB').replace(/\//g, '-')}
                           </span>
                           <span className="font-medium">
                             {p.payment_method}
