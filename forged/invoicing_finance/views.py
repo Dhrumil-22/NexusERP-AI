@@ -106,7 +106,9 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             else:
                 return Response({'error': 'Please provide an email address or associate a customer with one.'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            import traceback
+            traceback.print_exc()
+            return Response({'error': repr(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class InvoiceLineViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = InvoiceLineSerializer
