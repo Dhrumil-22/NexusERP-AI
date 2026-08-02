@@ -22,7 +22,7 @@ import {
 } from "recharts";
 import { CustomSelect } from "./CustomSelect";
 
-const API_BASE = "https://nexuserp-ai.onrender.com";
+import { API_BASE } from "../config";
 
 export function RootDashboard() {
   const { token, businessId, themeColor, businessName, role } = useAuth();

@@ -11,7 +11,7 @@ import {
   Plus,
 } from "lucide-react";
 
-const API_BASE = "https://nexuserp-ai.onrender.com";
+import { API_BASE } from "../config";
 
 export function PermissionsDashboard() {
   const { token, themeColor } = useAuth();

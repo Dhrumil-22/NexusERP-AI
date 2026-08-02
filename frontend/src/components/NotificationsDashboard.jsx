@@ -9,7 +9,7 @@ import {
   Receipt,
 } from "lucide-react";
 
-const API_BASE = "https://nexuserp-ai.onrender.com";
+import { API_BASE } from "../config";
 
 export function NotificationsDashboard() {
   const { token, themeColor } = useAuth();

@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Loader2, CheckCircle, UploadCloud, Sun, Moon } from "lucide-react";
 
-const API_BASE = "https://nexuserp-ai.onrender.com";
+import { API_BASE } from "../../config";
 
 export function VariantTopIllustration({
   isRegistering,
@@ -61,7 +61,7 @@ export function VariantTopIllustration({
         business_address,
         business_owner_name,
       } = meResponse.data;
-      const fullLogoUrl = logo ? `https://nexuserp-ai.onrender.com${logo}` : undefined;
+      const fullLogoUrl = logo ? `${API_BASE}${logo}` : undefined;
       setStatus("success");
       setTimeout(() => {
         login(

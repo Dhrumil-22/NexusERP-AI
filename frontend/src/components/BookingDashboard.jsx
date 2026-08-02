@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { CalendarDays, Clock, User, CalendarPlus, X } from "lucide-react";
 import { CustomSelect } from "./CustomSelect";
 
-const API_BASE = "https://nexuserp-ai.onrender.com";
+import { API_BASE } from "../config";
 
 export function BookingDashboard() {
   const { token, themeColor } = useAuth();

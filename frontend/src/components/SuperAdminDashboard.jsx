@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-const API_BASE = "https://nexuserp-ai.onrender.com";
+import { API_BASE } from "../config";
 
 export function SuperAdminDashboard() {
   const { token, themeColor } = useAuth();

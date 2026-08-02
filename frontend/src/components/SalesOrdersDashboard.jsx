@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Plus, Package } from "lucide-react";
 import { CustomSelect } from "./CustomSelect";
 
-const API_BASE = "https://nexuserp-ai.onrender.com";
+import { API_BASE } from "../config";
 
 export function SalesOrdersDashboard() {
   const { token, themeColor } = useAuth();

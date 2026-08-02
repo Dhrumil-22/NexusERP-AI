@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { CustomSelect } from "./CustomSelect";
 
-const API_BASE = "https://nexuserp-ai.onrender.com";
+import { API_BASE } from "../config";
 
 export function FormEngine({ manifest, formId, token }) {
   const formDef = manifest.forms.find((f) => f.form_id === formId);

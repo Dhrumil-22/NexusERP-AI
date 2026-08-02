@@ -12,7 +12,7 @@ import {
 import { CustomSelect } from "./CustomSelect";
 import { useCurrentUser } from "../hooks/useCurrentUser";
 
-const API_BASE = "https://nexuserp-ai.onrender.com";
+import { API_BASE } from "../config";
 
 export function AttendanceDashboard() {
   const { token, themeColor, role } = useAuth();

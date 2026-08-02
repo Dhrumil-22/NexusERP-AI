@@ -13,7 +13,7 @@ import {
 } from "recharts";
 import { useAuth } from "../context/AuthContext";
 
-const API_BASE = "https://nexuserp-ai.onrender.com";
+import { API_BASE } from "../config";
 
 export function DashboardEngine({ manifest }) {
   const { themeColor } = useAuth();

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { User, Building, Mail, Shield, Camera, Key } from "lucide-react";
 
-const API_BASE = "https://nexuserp-ai.onrender.com";
+import { API_BASE } from "../config";
 
 export function SecurityDashboard() {
   const { token, themeColor, businessName, logoUrl } = useAuth();

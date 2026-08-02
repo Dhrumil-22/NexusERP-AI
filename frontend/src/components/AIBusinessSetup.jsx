@@ -18,8 +18,7 @@ import {
 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
-const EXPRESS_API = "https://nexuserp-ai-express.onrender.com";
-const DJANGO_API = "https://nexuserp-ai.onrender.com";
+import { API_BASE, EXPRESS_API } from "../config";
 
 export function AIBusinessSetup() {
   const [step, setStep] = useState(1);
@@ -91,7 +90,7 @@ export function AIBusinessSetup() {
         formData.append("logo", logoFile);
       }
       await axios.post(
-        `${DJANGO_API}/api/business_setup/onboarding/`,
+        `${API_BASE}/api/business_setup/onboarding/`,
         formData,
         {
           headers: {
@@ -100,12 +99,12 @@ export function AIBusinessSetup() {
           },
         },
       );
-      const meResponse = await axios.get(`${DJANGO_API}/api/auth/me/`, {
+      const meResponse = await axios.get(`${API_BASE}/api/auth/me/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (meResponse.data.business_id) {
         const fullLogoUrl = meResponse.data.logo
-          ? `${DJANGO_API}${meResponse.data.logo}`
+          ? `${API_BASE}${meResponse.data.logo}`
           : undefined;
         login(
           token,

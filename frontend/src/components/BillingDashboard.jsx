@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { CustomSelect } from "./CustomSelect";
 
-const API_BASE = "https://nexuserp-ai.onrender.com";
+import { API_BASE } from "../config";
 
 export function BillingDashboard() {
   const { token, themeColor } = useAuth();
