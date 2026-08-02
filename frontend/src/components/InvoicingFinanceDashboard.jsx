@@ -99,6 +99,20 @@ export function InvoicingFinanceDashboard() {
       invoice.payments?.reduce((acc, p) => acc + parseFloat(p.amount), 0) || 0;
     return Math.max(0, total - paid);
   };
+  const handleSendEmail = async () => {
+    if (!selectedInvoice) return;
+    try {
+      await axios.post(
+        `${API_BASE}/api/billing/invoices/${selectedInvoice.id}/send_email/`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert("Email sent successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to send email. Check if customer has an email address.");
+    }
+  };
 
   const generatePDF = () => {
     if (!selectedInvoice) return;
@@ -457,6 +471,13 @@ export function InvoicingFinanceDashboard() {
                 style={{ borderColor: themeColor, color: themeColor }}
               >
                 <Download className="w-4 h-4" /> Generate PDF
+              </button>
+              
+              <button
+                onClick={handleSendEmail}
+                className="w-full py-3 mt-3 rounded-xl border border-border/50 bg-muted/20 font-bold transition-colors hover:bg-muted/40 flex items-center justify-center gap-2"
+              >
+                Send Email Receipt
               </button>
             </div>
           ) : (

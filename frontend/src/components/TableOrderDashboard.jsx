@@ -90,9 +90,10 @@ export function TableOrderDashboard() {
     if (isPaying) return;
     setIsPaying(true);
     try {
+      const sendEmail = window.confirm("Do you want to send the receipt via email to the customer (if they have one)?");
       await axios.post(
         `${API_BASE}/api/tables/orders/${orderId}/pay/`,
-        {},
+        { send_email: sendEmail },
         { headers: { Authorization: `Bearer ${token}` } },
       );
       setActiveTable(null);

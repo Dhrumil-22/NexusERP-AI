@@ -137,6 +137,38 @@ class OrderViewSet(viewsets.ModelViewSet):
                 items=items_for_signal
             )
         
+        # Send email if requested
+        send_email = request.data.get('send_email', False)
+        if send_email and order.customer_id:
+            try:
+                from django.core.mail import send_mail
+                from django.conf import settings
+                from customers.models import Customer
+                
+                customer = Customer.objects.for_tenant(order.tenant_id).filter(id=order.customer_id).first()
+                if customer and customer.email:
+                    subject = f"Receipt from {request.user.business.name}"
+                    message = f"Thank you for your visit, {customer.first_name}!\n\nYour total bill was ${total:.2f}.\n\n"
+                    
+                    for item in order.items.all():
+                        product = Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first()
+                        unit_price = product.price if product else 0.00
+                        message += f"- {item.quantity}x {item.product_id} @ ${unit_price:.2f} each\n"
+                        
+                    message += f"\nTotal: ${total:.2f}\n"
+                    message += f"\nThank you for choosing {request.user.business.name}!\n"
+                    
+                    send_mail(
+                        subject, 
+                        message, 
+                        settings.DEFAULT_FROM_EMAIL, 
+                        [customer.email],
+                        fail_silently=True
+                    )
+            except Exception as e:
+                import logging
+                logging.error(f"Failed to send email: {e}")
+                
         # Fire event for Invoicing
         order_paid.send(
             sender=self.__class__,

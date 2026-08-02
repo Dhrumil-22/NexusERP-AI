@@ -42,6 +42,43 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             
         return Response(InvoiceSerializer(invoice).data)
 
+    @action(detail=True, methods=['post'])
+    def send_email(self, request, pk=None):
+        invoice = self.get_object()
+        
+        if not invoice.customer_id:
+            return Response({'error': 'No customer associated with this invoice'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        try:
+            from django.core.mail import send_mail
+            from django.conf import settings
+            from customers.models import Customer
+            
+            customer = Customer.objects.for_tenant(invoice.tenant_id).filter(id=invoice.customer_id).first()
+            if customer and customer.email:
+                subject = f"Invoice {invoice.id} from {request.user.business.name}"
+                message = f"Hello {customer.first_name},\n\nHere is your invoice/receipt for your recent visit.\n\n"
+                
+                for line in invoice.lines.all():
+                    message += f"- {line.quantity}x {line.description} @ ${line.unit_price:.2f} each\n"
+                    
+                message += f"\nSubtotal: ${invoice.subtotal:.2f}\n"
+                message += f"Total: ${invoice.total:.2f}\n"
+                message += f"Status: {invoice.status.capitalize()}\n"
+                message += f"\nThank you for your business!\n"
+                
+                send_mail(
+                    subject, 
+                    message, 
+                    settings.DEFAULT_FROM_EMAIL, 
+                    [customer.email],
+                    fail_silently=False
+                )
+                return Response({'status': 'email sent'})
+            else:
+                return Response({'error': 'Customer has no email address on file.'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class InvoiceLineViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = InvoiceLineSerializer
