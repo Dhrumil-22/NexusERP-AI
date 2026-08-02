@@ -148,14 +148,14 @@ class OrderViewSet(viewsets.ModelViewSet):
                 customer = Customer.objects.for_tenant(order.tenant_id).filter(id=order.customer_id).first()
                 if customer and customer.email:
                     subject = f"Receipt from {request.user.business.name}"
-                    message = f"Thank you for your visit, {customer.first_name}!\n\nYour total bill was ${total:.2f}.\n\n"
+                    message = f"Thank you for your visit, {customer.first_name}!\n\nYour total bill was ₹{total:.2f}.\n\n"
                     
                     for item in order.items.all():
                         product = Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first()
                         unit_price = product.price if product else 0.00
-                        message += f"- {item.quantity}x {item.product_id} @ ${unit_price:.2f} each\n"
+                        message += f"- {item.quantity}x {item.product_id} @ ₹{unit_price:.2f} each\n"
                         
-                    message += f"\nTotal: ${total:.2f}\n"
+                    message += f"\nTotal: ₹{total:.2f}\n"
                     message += f"\nThank you for choosing {request.user.business.name}!\n"
                     
                     send_mail(

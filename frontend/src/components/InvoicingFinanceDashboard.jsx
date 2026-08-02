@@ -131,8 +131,8 @@ export function InvoicingFinanceDashboard() {
       <tr>
         <td style="padding: 12px; border-bottom: 1px solid #eee;">${l.description}</td>
         <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">${parseFloat(l.quantity)}</td>
-        <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">$${parseFloat(l.unit_price).toFixed(2)}</td>
-        <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">$${(parseFloat(l.quantity) * parseFloat(l.unit_price)).toFixed(2)}</td>
+        <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">₹${parseFloat(l.unit_price).toFixed(2)}</td>
+        <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">₹${(parseFloat(l.quantity) * parseFloat(l.unit_price)).toFixed(2)}</td>
       </tr>
     `,
       )
@@ -191,15 +191,15 @@ export function InvoicingFinanceDashboard() {
           <div class="totals">
             <div class="totals-row">
               <span style="color: #666;">Subtotal:</span>
-              <span>$${parseFloat(selectedInvoice.total).toFixed(2)}</span>
+              <span>₹${parseFloat(selectedInvoice.total).toFixed(2)}</span>
             </div>
             <div class="totals-row">
               <span style="color: #666;">Amount Paid:</span>
-              <span style="color: #16a34a;">-$${(parseFloat(selectedInvoice.total) - calculateBalance(selectedInvoice)).toFixed(2)}</span>
+              <span style="color: #16a34a;">-₹${(parseFloat(selectedInvoice.total) - calculateBalance(selectedInvoice)).toFixed(2)}</span>
             </div>
             <div class="totals-row grand-total">
               <span>Balance Due:</span>
-              <span>$${calculateBalance(selectedInvoice).toFixed(2)}</span>
+              <span>₹${calculateBalance(selectedInvoice).toFixed(2)}</span>
             </div>
           </div>
           
@@ -385,7 +385,7 @@ export function InvoicingFinanceDashboard() {
                       </span>
                     </div>
                     <span className="font-mono">
-                      $
+                      ₹
                       {(
                         parseFloat(item.quantity) * parseFloat(item.unit_price)
                       ).toFixed(2)}
@@ -518,7 +518,7 @@ export function InvoicingFinanceDashboard() {
                     setNewPayment({ ...newPayment, amount: e.target.value })
                   }
                   className="w-full px-3 py-2 bg-muted/30 border border-border/50 rounded-lg focus:outline-none"
-                  placeholder={`Max: $${calculateBalance(selectedInvoice).toFixed(2)}`}
+                  placeholder={`Max: ₹${calculateBalance(selectedInvoice).toFixed(2)}`}
                 />
               </div>
               <div className="space-y-2">

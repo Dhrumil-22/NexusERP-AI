@@ -15,7 +15,7 @@ def handle_invoice_created(sender, tenant_id, items, **kwargs):
     if customer_id and total_amount > 0:
         try:
             customer = Customer.objects.get(id=customer_id, tenant_id=tenant_id)
-            # Example rule: 1 point per $10 spent
+            # Example rule: 1 point per ₹10 spent
             points_earned = int(float(total_amount) / 10)
             if points_earned > 0:
                 customer.loyalty_points += points_earned

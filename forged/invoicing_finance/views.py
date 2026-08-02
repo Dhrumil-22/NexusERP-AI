@@ -60,10 +60,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 message = f"Hello {customer.first_name},\n\nHere is your invoice/receipt for your recent visit.\n\n"
                 
                 for line in invoice.lines.all():
-                    message += f"- {line.quantity}x {line.description} @ ${line.unit_price:.2f} each\n"
+                    message += f"- {line.quantity}x {line.description} @ ₹{line.unit_price:.2f} each\n"
                     
-                message += f"\nSubtotal: ${invoice.subtotal:.2f}\n"
-                message += f"Total: ${invoice.total:.2f}\n"
+                message += f"\nSubtotal: ₹{invoice.subtotal:.2f}\n"
+                message += f"Total: ₹{invoice.total:.2f}\n"
                 message += f"Status: {invoice.status.capitalize()}\n"
                 message += f"\nThank you for your business!\n"
                 

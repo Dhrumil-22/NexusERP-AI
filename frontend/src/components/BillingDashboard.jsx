@@ -457,7 +457,7 @@ function InvoiceModal({ onClose, onSuccess }) {
           <div className="grid grid-cols-2 gap-8">
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold">Discount ($)</label>
+                <label className="text-sm font-semibold">Discount (₹)</label>
                 <input
                   type="number"
                   min="0"
@@ -492,18 +492,18 @@ function InvoiceModal({ onClose, onSuccess }) {
 
             <div className="bg-muted/30 p-6 rounded-2xl flex flex-col justify-end space-y-2 text-right">
               <div className="text-sm text-muted-foreground flex justify-between">
-                <span>Subtotal:</span> <span>${subtotal.toFixed(2)}</span>
+                <span>Subtotal:</span> <span>₹{subtotal.toFixed(2)}</span>
               </div>
               <div className="text-sm text-muted-foreground flex justify-between">
                 <span>Discount:</span>{" "}
-                <span>-${Number(formData.discount).toFixed(2)}</span>
+                <span>-₹{Number(formData.discount).toFixed(2)}</span>
               </div>
               <div className="text-sm text-muted-foreground flex justify-between">
-                <span>Tax:</span> <span>${tax.toFixed(2)}</span>
+                <span>Tax:</span> <span>₹{tax.toFixed(2)}</span>
               </div>
               <div className="border-t border-border/50 pt-2 text-xl font-bold flex justify-between mt-2">
                 <span>Total:</span>{" "}
-                <span className="text-primary">${total.toFixed(2)}</span>
+                <span className="text-primary">₹{total.toFixed(2)}</span>
               </div>
             </div>
           </div>

@@ -260,12 +260,12 @@ export function SalesOrdersDashboard() {
                             {prodName}
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            {item.quantity} x $
+                            {item.quantity} x ₹
                             {parseFloat(item.unit_price).toFixed(2)}
                           </div>
                         </div>
                         <div className="font-bold font-mono text-sm">
-                          $
+                          ₹
                           {(
                             parseFloat(item.quantity) *
                             parseFloat(item.unit_price)
@@ -312,7 +312,7 @@ export function SalesOrdersDashboard() {
                         .filter((p) => parseFloat(p.stock_quantity) > 0)
                         .map((p) => (
                           <option key={p.id} value={p.id}>
-                            {p.name} (${p.price})
+                            {p.name} (₹{p.price})
                           </option>
                         ))}
                     </CustomSelect>

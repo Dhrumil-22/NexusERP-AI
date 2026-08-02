@@ -582,7 +582,7 @@ export function TableOrderDashboard() {
                     .filter((p) => parseFloat(p.stock_quantity) > 0)
                     .map((p) => (
                       <option key={p.id} value={p.name}>
-                        {p.name} (${Number(p.price).toFixed(2)})
+                        {p.name} (₹{Number(p.price).toFixed(2)})
                       </option>
                     ))}
                 </CustomSelect>
