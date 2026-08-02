@@ -86,8 +86,15 @@ export function VariantTopIllustration({
       }, 800);
     } catch (err) {
       setStatus("error");
-      if (err.response && err.response.data && err.response.data.detail) {
-        setErrorMsg(err.response.data.detail);
+      if (err.response && err.response.data) {
+        if (err.response.data.detail) {
+          setErrorMsg(err.response.data.detail);
+        } else if (typeof err.response.data === "object") {
+          const errors = Object.values(err.response.data).flat();
+          setErrorMsg(errors[0] || "Registration failed.");
+        } else {
+          setErrorMsg(isRegistering ? "Registration failed." : "Invalid username or password.");
+        }
       } else {
         setErrorMsg(
           isRegistering
