@@ -86,8 +86,12 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 html_content += f"<p><b>Status:</b> {invoice.status.capitalize()}</p>"
                 html_content += f"<br><p>Thank you for choosing <b>{business_name}</b>!</p>"
                 
-                # Use custom from_email in the from header if provided, otherwise default
-                from_header = f"{business_name} <{sender_email}>" if custom_from else f"{business_name} <{settings.DEFAULT_FROM_EMAIL}>"
+                # If using default, ensure we don't nest brackets since DEFAULT_FROM_EMAIL might already be formatted
+                import re
+                base_default_email = re.search(r'<([^>]+)>', str(settings.DEFAULT_FROM_EMAIL))
+                base_default_email = base_default_email.group(1) if base_default_email else settings.DEFAULT_FROM_EMAIL
+                from_header = f"{business_name} <{sender_email}>" if custom_from else f"{business_name} <{base_default_email}>"
+                
                 msg = EmailMultiAlternatives(
                     subject,
                     text_content,

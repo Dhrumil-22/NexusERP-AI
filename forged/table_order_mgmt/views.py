@@ -92,10 +92,12 @@ class OrderViewSet(viewsets.ModelViewSet):
         table.is_occupied = False
         table.save()
         
+        from inventory.models import Product
+        total = sum((Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first().price if Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first() else 0.0) * float(item.quantity) for item in order.items.all())
+        
         # Generate SalesOrder if there's a customer
         if order.customer_id:
             from sales_orders.models import Order as SalesOrder, OrderItem as SalesOrderItem
-            from inventory.models import Product
             sales_order = SalesOrder.objects.create(
                 tenant_id=order.tenant_id,
                 customer_id=order.customer_id,
@@ -104,7 +106,6 @@ class OrderViewSet(viewsets.ModelViewSet):
             )
             
             items_for_signal = []
-            total = 0.0
             
             for item in order.items.all():
                 product = Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first()
@@ -124,7 +125,6 @@ class OrderViewSet(viewsets.ModelViewSet):
                     'quantity': float(item.quantity),
                     'unit_price': float(unit_price)
                 })
-                total += float(item.quantity) * float(unit_price)
                 
             from core.events import order_confirmed
             order_confirmed.send(
@@ -175,7 +175,11 @@ class OrderViewSet(viewsets.ModelViewSet):
                     html_content += f"</table><p><b>Total:</b> <span style='font-size: 18px; color: #3b82f6;'>₹{total:.2f}</span></p>"
                     html_content += f"<br><p>Thank you for choosing <b>{business_name}</b>!</p>"
                     
-                    from_header = f"{business_name} <{sender_email}>" if custom_from else f"{business_name} <{settings.DEFAULT_FROM_EMAIL}>"
+                    import re
+                    base_default_email = re.search(r'<([^>]+)>', str(settings.DEFAULT_FROM_EMAIL))
+                    base_default_email = base_default_email.group(1) if base_default_email else settings.DEFAULT_FROM_EMAIL
+                    from_header = f"{business_name} <{sender_email}>" if custom_from else f"{business_name} <{base_default_email}>"
+                    
                     msg = EmailMultiAlternatives(
                         subject,
                         text_content,

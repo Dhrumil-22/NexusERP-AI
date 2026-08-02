@@ -43,6 +43,7 @@ export function InvoicingFinanceDashboard() {
   const [emailInput, setEmailInput] = useState("");
   const [fromEmailInput, setFromEmailInput] = useState("");
   const [isNewEmail, setIsNewEmail] = useState(false);
+  const [isEmailing, setIsEmailing] = useState(false);
   const [statusMessage, setStatusMessage] = useState(null);
 
   const fetchData = async () => {
@@ -107,6 +108,7 @@ export function InvoicingFinanceDashboard() {
   };
   const handleSendEmail = async () => {
     if (!selectedInvoice) return;
+    setIsEmailing(true);
     try {
       await axios.post(
         `${API_BASE}/api/billing/invoices/${selectedInvoice.id}/send_email/`,
@@ -120,6 +122,8 @@ export function InvoicingFinanceDashboard() {
     } catch (err) {
       console.error(err);
       setStatusMessage({ title: "Error", message: "Failed to send email. Check if customer has an email address.", type: "error" });
+    } finally {
+      setIsEmailing(false);
     }
   };
 
@@ -659,10 +663,11 @@ export function InvoicingFinanceDashboard() {
                 </button>
                 <button
                   onClick={handleSendEmail}
-                  className="flex-1 px-4 py-3 rounded-xl font-bold text-white transition-transform hover:scale-[1.02]"
+                  disabled={isEmailing}
+                  className="flex-1 px-4 py-3 rounded-xl font-bold text-white transition-transform hover:scale-[1.02] disabled:opacity-70 disabled:scale-100"
                   style={{ backgroundColor: themeColor }}
                 >
-                  Send
+                  {isEmailing ? "Sending..." : "Send"}
                 </button>
               </div>
             </div>
