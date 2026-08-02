@@ -82,13 +82,13 @@ export function BillingDashboard() {
         />
         <StatCard
           title="Total Revenue"
-          value={`$${totalRevenue.toFixed(2)}`}
+          value={`₹${totalRevenue.toFixed(2)}`}
           icon={<DollarSign />}
           themeColor="#10b981"
         />
         <StatCard
           title="Pending Receivables"
-          value={`$${pendingRevenue.toFixed(2)}`}
+          value={`₹${pendingRevenue.toFixed(2)}`}
           icon={<Receipt />}
           themeColor="#3b82f6"
         />
@@ -155,7 +155,7 @@ export function BillingDashboard() {
                         {new Date(inv.created_at).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-4 text-right font-bold">
-                        ${parseFloat(inv.total).toFixed(2)}
+                        ₹{parseFloat(inv.total).toFixed(2)}
                       </td>
                       <td className="px-4 py-4 text-center">
                         <span
@@ -440,7 +440,7 @@ function InvoiceModal({ onClose, onSuccess }) {
                   />
                 </div>
                 <div className="w-24 pt-2 text-right font-bold text-sm">
-                  $
+                  ₹
                   {(Number(line.quantity) * Number(line.unit_price)).toFixed(2)}
                 </div>
               </div>

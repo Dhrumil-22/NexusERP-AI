@@ -315,13 +315,13 @@ export function InvoicingFinanceDashboard() {
                           </span>
                         </td>
                         <td className="px-4 py-4 text-right font-mono font-bold">
-                          ${parseFloat(invoice.total).toFixed(2)}
+                          ₹{parseFloat(invoice.total).toFixed(2)}
                         </td>
                         <td
                           className="px-4 py-4 text-right font-mono font-bold"
                           style={{ color: balance > 0 ? "#ef4444" : "#22c55e" }}
                         >
-                          ${balance.toFixed(2)}
+                          ₹{balance.toFixed(2)}
                         </td>
                       </tr>
                     );
@@ -398,13 +398,13 @@ export function InvoicingFinanceDashboard() {
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
                   <span className="font-mono">
-                    ${parseFloat(selectedInvoice.total).toFixed(2)}
+                    ₹{parseFloat(selectedInvoice.total).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-muted-foreground">Amount Paid</span>
                   <span className="font-mono text-green-600">
-                    -$
+                    -₹
                     {(
                       parseFloat(selectedInvoice.total) -
                       calculateBalance(selectedInvoice)
@@ -422,7 +422,7 @@ export function InvoicingFinanceDashboard() {
                           : themeColor,
                     }}
                   >
-                    ${calculateBalance(selectedInvoice).toFixed(2)}
+                    ₹{calculateBalance(selectedInvoice).toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -448,7 +448,7 @@ export function InvoicingFinanceDashboard() {
                           </span>
                         </div>
                         <span className="font-mono font-bold text-green-600">
-                          +${parseFloat(p.amount).toFixed(2)}
+                          +₹{parseFloat(p.amount).toFixed(2)}
                         </span>
                       </div>
                     ))}
