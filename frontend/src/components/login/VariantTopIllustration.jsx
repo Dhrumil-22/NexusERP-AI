@@ -61,7 +61,11 @@ export function VariantTopIllustration({
         business_address,
         business_owner_name,
       } = meResponse.data;
-      const fullLogoUrl = logo ? `${API_BASE}${logo}` : undefined;
+      const fullLogoUrl = logo
+          ? logo.startsWith("data:") 
+            ? logo 
+            : `${API_BASE}${logo}`
+          : undefined;
       setStatus("success");
       setTimeout(() => {
         login(

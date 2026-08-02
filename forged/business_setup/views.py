@@ -68,7 +68,11 @@ class BusinessSetupView(APIView):
                 business.theme_color = serializer.validated_data['theme_color']
                 
             if 'logo' in request.FILES:
-                business.logo = request.FILES['logo']
+                import base64
+                logo_file = request.FILES['logo']
+                encoded_string = base64.b64encode(logo_file.read()).decode('utf-8')
+                mime_type = logo_file.content_type
+                business.logo_base64 = f"data:{mime_type};base64,{encoded_string}"
             
             # Save the AI prompt if provided in the payload
             ai_prompt = request.data.get('ai_prompt')

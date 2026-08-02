@@ -24,6 +24,7 @@ class Business(models.Model):
     gst_number = models.CharField(max_length=50, blank=True)
     enabled_modules = models.JSONField(default=list, blank=True)
     logo = models.ImageField(upload_to='business_logos/', blank=True, null=True)
+    logo_base64 = models.TextField(blank=True, null=True)
     theme_color = models.CharField(max_length=7, default='#3b82f6')
     currency = models.CharField(max_length=10, default='USD')
     timezone = models.CharField(max_length=50, default='UTC')
@@ -42,6 +43,7 @@ class User(AbstractUser):
     two_factor_enabled = models.BooleanField(default=False)
     assigned_modules = models.JSONField(default=list, blank=True)
     avatar = models.ImageField(upload_to='user_avatars/', blank=True, null=True)
+    avatar_base64 = models.TextField(blank=True, null=True)
 
     def __str__(self) -> str:
         return str(self.username)

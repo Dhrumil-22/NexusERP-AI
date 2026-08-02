@@ -12,7 +12,22 @@ class UserSerializer(serializers.ModelSerializer):
     business_name = serializers.CharField(source='business.name', read_only=True)
     business_owner_name = serializers.CharField(source='business.owner_name', read_only=True)
     business_address = serializers.CharField(source='business.address', read_only=True)
-    logo = serializers.ImageField(source='business.logo', read_only=True)
+    logo = serializers.SerializerMethodField()
+    avatar = serializers.SerializerMethodField()
+
+    def get_logo(self, obj):
+        if obj.business and obj.business.logo_base64:
+            return obj.business.logo_base64
+        if obj.business and obj.business.logo:
+            return obj.business.logo.url
+        return None
+        
+    def get_avatar(self, obj):
+        if obj.avatar_base64:
+            return obj.avatar_base64
+        if obj.avatar:
+            return obj.avatar.url
+        return None
     theme_color = serializers.CharField(source='business.theme_color', read_only=True)
 
     class Meta:

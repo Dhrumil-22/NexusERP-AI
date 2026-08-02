@@ -104,7 +104,9 @@ export function AIBusinessSetup() {
       });
       if (meResponse.data.business_id) {
         const fullLogoUrl = meResponse.data.logo
-          ? `${API_BASE}${meResponse.data.logo}`
+          ? meResponse.data.logo.startsWith("data:") 
+            ? meResponse.data.logo 
+            : `${API_BASE}${meResponse.data.logo}`
           : undefined;
         login(
           token,
