@@ -46,7 +46,7 @@ def handle_invoice_created(sender, tenant_id, items, **kwargs):
                     title='Product Out of Stock',
                     message=f'Product "{product.name}" has reached 0 stock.'
                 )
-        except ObjectDoesNotExist:
+        except (ObjectDoesNotExist, Exception):
             pass
 
 @receiver(stock_low)
