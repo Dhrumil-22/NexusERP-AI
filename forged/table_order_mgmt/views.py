@@ -93,7 +93,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         table.save()
         
         from inventory.models import Product
-        total = sum((Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first().price if Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first() else 0.0) * float(item.quantity) for item in order.items.all())
+        total = sum((float(Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first().price) if Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first() else 0.0) * float(item.quantity) for item in order.items.all())
         
         # Generate SalesOrder if there's a customer
         if order.customer_id:
