@@ -77,22 +77,32 @@ export function CustomerCareDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12">
+      <div className="flex flex-col space-y-12">
         
-        {/* Left Column: Create Request */}
-        <div className="lg:col-span-4 space-y-8">
+        {/* Top Section: Create Request */}
+        <div className="space-y-6">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass-panel rounded-3xl p-8 relative overflow-hidden group border border-border/50 hover:border-primary/30 transition-all duration-300"
+            className="glass-panel rounded-3xl p-8 md:p-10 relative overflow-hidden group border border-border/50 hover:border-primary/30 transition-all duration-300"
           >
-            <div className="absolute top-0 left-0 w-full h-1" style={{ backgroundColor: themeColor }} />
+            <div className="absolute top-0 left-0 w-full h-1.5" style={{ backgroundColor: themeColor }} />
             
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2.5 rounded-xl bg-primary/10 text-primary" style={{ color: themeColor, backgroundColor: `${themeColor}20` }}>
-                <MessageSquarePlus className="w-5 h-5" />
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
+              <div className="flex items-center gap-4">
+                <div className="p-3.5 rounded-2xl bg-primary/10 text-primary" style={{ color: themeColor, backgroundColor: `${themeColor}20` }}>
+                  <MessageSquarePlus className="w-6 h-6" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground">What do you need?</h2>
+                  <p className="text-muted-foreground mt-1">Describe your bottleneck or scale, and AI will suggest the best ERP modules.</p>
+                </div>
               </div>
-              <h2 className="text-xl font-bold text-foreground">New Request</h2>
+              
+              <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground bg-background/50 px-4 py-2.5 rounded-full border border-border/50">
+                <Sparkles className="w-4 h-4 text-primary" style={{ color: themeColor }} />
+                <span>Tip: Mention your industry & current staff count</span>
+              </div>
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -101,51 +111,45 @@ export function CustomerCareDashboard() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="e.g. I am opening two new cafe branches and need a better way to track daily attendance and multi-location inventory..."
-                  className="w-full p-5 pb-14 border border-border/50 bg-background/50 text-foreground rounded-2xl focus:ring-2 focus:border-transparent outline-none resize-none min-h-[220px] placeholder:text-muted-foreground/50 transition-all shadow-inner custom-scrollbar text-base leading-relaxed"
+                  className="w-full p-6 pb-20 border border-border/50 bg-background/50 text-foreground rounded-3xl focus:ring-2 focus:border-transparent outline-none resize-none min-h-[180px] placeholder:text-muted-foreground/50 transition-all shadow-inner custom-scrollbar text-lg leading-relaxed"
                   style={{ '--tw-ring-color': themeColor }}
                 />
                 
-                <div className="absolute bottom-4 right-4">
+                <div className="absolute bottom-5 right-5 flex items-center gap-4">
+                  <span className={`text-sm font-medium ${message.length > 0 ? 'text-primary' : 'text-muted-foreground/50'}`} style={{ color: message.length > 0 ? themeColor : undefined }}>
+                    {message.length > 0 ? "Ready to analyze" : "Start typing..."}
+                  </span>
                   <button
                     type="submit"
                     disabled={isSubmitting || !message.trim()}
-                    className="p-2.5 rounded-lg text-white font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95 flex items-center justify-center shadow-lg"
+                    className="px-8 py-3.5 rounded-xl text-white font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95 flex items-center justify-center shadow-xl gap-2"
                     style={{ backgroundColor: themeColor }}
                   >
                     {isSubmitting ? (
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                      >
-                        <Sparkles className="w-5 h-5" />
-                      </motion.div>
+                      <>
+                        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
+                          <Sparkles className="w-5 h-5" />
+                        </motion.div>
+                        Consulting AI...
+                      </>
                     ) : (
-                      <Send className="w-5 h-5" />
+                      <>
+                        <Send className="w-5 h-5" />
+                        Submit Request
+                      </>
                     )}
                   </button>
                 </div>
               </div>
             </form>
           </motion.div>
-
-          <div className="glass-panel rounded-3xl p-8 border border-border/50 bg-primary/5">
-            <h3 className="text-base font-bold text-foreground mb-4 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-primary" style={{ color: themeColor }} />
-              Tips for better AI advice
-            </h3>
-            <ul className="text-sm text-muted-foreground space-y-3 list-disc list-inside leading-relaxed">
-              <li>Mention your specific industry</li>
-              <li>Describe the bottleneck you're facing</li>
-              <li>Include your current scale (e.g. staff count, branches)</li>
-            </ul>
-          </div>
         </div>
 
-        {/* Right Column: Past Requests */}
-        <div className="lg:col-span-8 space-y-8">
-          <div className="flex items-center gap-3 mb-4">
-            <History className="w-6 h-6 text-muted-foreground" />
-            <h2 className="text-2xl font-bold text-foreground">Consultation History</h2>
+        {/* Bottom Section: Past Requests */}
+        <div className="space-y-8">
+          <div className="flex items-center gap-3 mb-6 px-2">
+            <History className="w-7 h-7 text-muted-foreground" />
+            <h2 className="text-3xl font-bold text-foreground">Consultation History</h2>
           </div>
 
           <div className="space-y-4">
