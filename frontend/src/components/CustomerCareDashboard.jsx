@@ -67,9 +67,8 @@ export function CustomerCareDashboard() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
-            <Bot className="w-7 h-7 text-primary" style={{ color: themeColor }} />
-            AI Growth Consultant
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-3">
+            Customer Care
           </h1>
           <p className="text-muted-foreground mt-1 text-sm md:text-base">
             Describe your business challenges, and our AI will recommend the perfect ERP modules to scale your operations.
