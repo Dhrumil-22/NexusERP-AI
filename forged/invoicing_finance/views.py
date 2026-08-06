@@ -102,7 +102,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                     }).encode('utf-8'),
                     headers={
                         'Authorization': f'Bearer {RESEND_API_KEY}',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'User-Agent': 'NexusERP/1.0 (Integration)'
                     },
                     method='POST'
                 )
