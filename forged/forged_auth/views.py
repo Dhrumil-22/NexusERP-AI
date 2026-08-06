@@ -110,7 +110,21 @@ class LoginView(APIView):
         if user is None:
             return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
             
-        target_email = getattr(user, 'email', None) or "dhrumilvaghela22@gmail.com"
+        target_email = getattr(user, 'email', None) or ""
+        
+        # Cross-check Employee HR model for the most up-to-date email and sync if needed
+        try:
+            from employee_hr.models import Employee
+            emp = Employee.objects.filter(tenant_id=user.tenant_id, first_name=user.first_name, last_name=user.last_name).first()
+            if emp and emp.email and emp.email != user.email:
+                user.email = emp.email
+                user.save(update_fields=['email'])
+                target_email = emp.email
+        except Exception:
+            pass
+        
+        if not target_email:
+            target_email = "dhrumilvaghela22@gmail.com"
         
         # Step 1: No OTP provided -> Generate and send OTP
         if not otp_input:
