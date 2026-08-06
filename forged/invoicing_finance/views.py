@@ -214,12 +214,17 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                         p.drawString(50, y, str(business_owner_name))
                         
                     if business_address:
+                        import textwrap
                         p.setFont("Helvetica", 9)
                         p.setFillColor(colors.HexColor("#6b7280"))
-                        for addr_line in str(business_address).split('\n'):
-                            if addr_line.strip():
-                                y -= 14
-                                p.drawString(50, y, addr_line.strip())
+                        raw_lines = str(business_address).split('\n')
+                        wrapped_lines = []
+                        for raw in raw_lines:
+                            if raw.strip():
+                                wrapped_lines.extend(textwrap.wrap(raw.strip(), width=42))
+                        for addr_line in wrapped_lines[:4]:
+                            y -= 13
+                            p.drawString(50, y, addr_line)
                             
                     # Top Right: BILL TO
                     y_right = height - 50
