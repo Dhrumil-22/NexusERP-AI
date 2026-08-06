@@ -12,7 +12,7 @@ import { TopNavbar } from "./components/TopNavbar";
 import { DashboardEngine } from "./components/DashboardEngine";
 import { RootDashboard } from "./components/RootDashboard";
 import { SuperAdminDashboard } from "./components/SuperAdminDashboard";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, MessageSquarePlus } from "lucide-react";
 import { FormEngine } from "./components/FormEngine";
 import { InventoryDashboard } from "./components/InventoryDashboard";
 import { CustomersDashboard } from "./components/CustomersDashboard";
@@ -146,6 +146,17 @@ function Layout() {
           </footer>
         </main>
       </div>
+      
+      {/* Floating AI Consultant Button */}
+      {businessName !== "Nexus AI Admin" && (
+        <button
+          onClick={() => window.location.href = "/module/customer_care"}
+          className="fixed bottom-6 right-6 p-4 rounded-full bg-green-600 text-white shadow-lg shadow-green-600/30 hover:bg-green-700 hover:scale-105 transition-all z-50 flex items-center justify-center"
+          title="AI Growth Consultant"
+        >
+          <MessageSquarePlus className="w-6 h-6" />
+        </button>
+      )}
     </div>
   );
 }
