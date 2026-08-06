@@ -54,6 +54,42 @@ function Layout() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const scanUIErrors = () => {
+    const issues = [];
+    const elements = document.querySelectorAll('*');
+    
+    elements.forEach((el) => {
+      // Exclude the debugger itself
+      if (el.closest('.z-\\[100\\]')) return;
+      
+      const rect = el.getBoundingClientRect();
+      
+      // Check horizontal overflow (element is wider than screen)
+      if (rect.right > window.innerWidth) {
+        issues.push(`- [Overflow]: <${el.tagName.toLowerCase()} class="${el.className}"> extends past screen edge (Right: ${Math.round(rect.right)}px, Screen: ${window.innerWidth}px)`);
+      }
+      
+      // Check horizontal scrollbar (content inside is wider than element)
+      if (el.scrollWidth > el.clientWidth && el.clientWidth > 0 && window.getComputedStyle(el).overflowX !== 'hidden' && window.getComputedStyle(el).overflowX !== 'clip') {
+        issues.push(`- [Scroll]: <${el.tagName.toLowerCase()} class="${el.className}"> has unexpected horizontal scrolling.`);
+      }
+    });
+
+    if (issues.length === 0) {
+      alert("UI Scanner: No obvious layout errors found!");
+    } else {
+      // De-duplicate issues
+      const uniqueIssues = [...new Set(issues)];
+      const report = "UI Layout Error Report:\\n" + uniqueIssues.join('\\n');
+      navigator.clipboard.writeText(report).then(() => {
+        alert(`Found ${uniqueIssues.length} layout issues!\\nThe report has been COPIED to your clipboard.\\nYou can paste it to the AI.`);
+      }).catch(() => {
+        alert(`Found ${uniqueIssues.length} layout issues!\\n\\n${report}`);
+      });
+    }
+  };
+
   const {
     data: manifests,
     isLoading,
@@ -178,6 +214,13 @@ function Layout() {
           <span className="hidden lg:inline xl:hidden">LG (Desktop)</span>
           <span className="hidden xl:inline">XL (Wide)</span>
         </div>
+        <button
+          onClick={scanUIErrors}
+          className="px-2 py-1 rounded text-xs font-mono font-bold transition-colors bg-blue-500 text-white hover:bg-blue-600"
+          title="Scan UI for Errors"
+        >
+          SCAN UI
+        </button>
         <button
           onClick={() => setUiDebug(!uiDebug)}
           className={`px-2 py-1 rounded text-xs font-mono font-bold transition-colors ${
