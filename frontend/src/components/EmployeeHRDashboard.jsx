@@ -354,9 +354,9 @@ export function EmployeeHRDashboard() {
       )}
 
       {activeTab === "attendance" && (
-        <div className="flex gap-6 h-full min-h-[500px]">
+        <div className="flex flex-col lg:flex-row gap-6 h-full min-h-[500px]">
           {/* Quick Clock In/Out */}
-          <div className="w-80 shrink-0 glass-panel rounded-2xl p-6 border border-border/50 flex flex-col space-y-4">
+          <div className="w-full lg:w-80 shrink-0 glass-panel rounded-2xl p-6 border border-border/50 flex flex-col space-y-4">
             <h2 className="text-xl font-bold flex items-center gap-2">
               <Clock className="w-5 h-5" /> Quick Action
             </h2>

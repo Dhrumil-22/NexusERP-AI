@@ -234,7 +234,7 @@ export function TableOrderDashboard() {
         </button>
       </div>
 
-      <div className="flex flex-1 gap-6 h-full min-h-[500px]">
+      <div className="flex flex-col lg:flex-row flex-1 gap-6 h-full min-h-[500px]">
         {/* Floor Plan */}
         <div className="flex-1 glass-panel rounded-2xl p-6 border border-border/50">
           <h2 className="text-xl font-bold mb-6">Floor Plan</h2>
@@ -248,7 +248,7 @@ export function TableOrderDashboard() {
               <p className="text-muted-foreground">No tables configured.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
               {tables.map((table) => (
                 <button
                   key={table.id}

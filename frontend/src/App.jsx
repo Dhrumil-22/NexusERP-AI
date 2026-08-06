@@ -148,7 +148,7 @@ function Layout() {
               />
             </Routes>
           </div>
-          <footer className="w-full p-4 mt-auto border-t border-border/20 text-center text-xs font-semibold text-muted-foreground/60 shrink-0">
+          <footer className="w-full p-4 pb-20 md:pb-4 mt-auto border-t border-border/20 text-center text-xs font-semibold text-muted-foreground/60 shrink-0">
             {businessName === "Nexus AI Admin"
               ? "© 2026 NexusERP AI. All rights reserved."
               : "Powered by NexusERP AI"}
