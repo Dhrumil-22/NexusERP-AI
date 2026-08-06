@@ -68,23 +68,114 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 
                 customer_name = customer.first_name if customer else "Customer"
                 
-                # Plain text version
-                text_content = f"Hello {customer_name},\n\nHere is your invoice/receipt for your recent visit.\n\n"
-                html_content = f"<h3>Hello {customer_name},</h3><p>Here is your invoice/receipt for your recent visit.</p><table style='width:100%; border-collapse: collapse; margin-bottom: 20px;'><tr style='border-bottom: 2px solid #ddd; text-align: left;'><th>Item</th><th>Qty</th><th>Price</th></tr>"
+                is_bill = getattr(invoice, 'document_type', 'invoice') == 'bill'
+                doc_title = "Bill Receipt" if is_bill else "Tax Invoice"
+                subject = f"{doc_title} #{str(invoice.id)[:8].upper()} from {business_name}"
+                
+                customer_name = customer.first_name if (customer and getattr(customer, 'first_name', None)) else (customer.name if (customer and getattr(customer, 'name', None)) else "Valued Customer")
+                
+                # Plain Text Email Version
+                text_content = f"Dear {customer_name},\n\n"
+                text_content += f"Thank you for choosing {business_name}! It was a pleasure serving you.\n"
+                text_content += f"We hope you had a great experience and look forward to welcoming you back again soon!\n\n"
+                text_content += f"--- {doc_title.upper()} SUMMARY ---\n"
+                text_content += f"Document #: {str(invoice.id)[:8].upper()}\n"
+                text_content += f"Date: {invoice.created_at.strftime('%d-%m-%Y') if hasattr(invoice, 'created_at') else ''}\n"
+                text_content += f"Status: {invoice.status.upper()}\n\n"
                 
                 for line in invoice.lines.all():
-                    text_content += f"- {line.quantity}x {line.description} @ ₹{line.unit_price:.2f} each\n"
-                    html_content += f"<tr style='border-bottom: 1px solid #eee;'><td>{line.description}</td><td>{line.quantity}</td><td>₹{line.unit_price:.2f}</td></tr>"
+                    text_content += f"- {line.quantity}x {line.description} @ ₹{line.unit_price:.2f} = ₹{(line.quantity * line.unit_price):.2f}\n"
                     
-                text_content += f"\nSubtotal: ₹{invoice.subtotal:.2f}\n"
-                text_content += f"Total: ₹{invoice.total:.2f}\n"
-                text_content += f"Status: {invoice.status.capitalize()}\n"
-                text_content += f"\nThank you for your business!\n"
+                text_content += f"\nTotal Amount: ₹{invoice.total:.2f}\n\n"
+                text_content += f"Your official PDF receipt is attached to this email.\n\n"
+                text_content += f"Warm regards,\n{business_name} Team\n"
                 
-                html_content += f"</table><p><b>Subtotal:</b> ₹{invoice.subtotal:.2f}</p>"
-                html_content += f"<p><b>Total:</b> <span style='font-size: 18px; color: #3b82f6;'>₹{invoice.total:.2f}</span></p>"
-                html_content += f"<p><b>Status:</b> {invoice.status.capitalize()}</p>"
-                html_content += f"<br><p>Thank you for choosing <b>{business_name}</b>!</p>"
+                # HTML Email Version (Sleek SaaS Card Design)
+                lines_table_rows = ""
+                for line in invoice.lines.all():
+                    line_total = line.quantity * line.unit_price
+                    lines_table_rows += f"""
+                    <tr>
+                      <td style="padding: 10px 12px; border-bottom: 1px solid #f3f4f6; color: #374151;">{line.description}</td>
+                      <td style="padding: 10px 12px; border-bottom: 1px solid #f3f4f6; text-align: center; color: #4b5563;">{line.quantity}</td>
+                      <td style="padding: 10px 12px; border-bottom: 1px solid #f3f4f6; text-align: right; color: #4b5563;">₹{line.unit_price:.2f}</td>
+                      <td style="padding: 10px 12px; border-bottom: 1px solid #f3f4f6; text-align: right; font-weight: 600; color: #111827;">₹{line_total:.2f}</td>
+                    </tr>
+                    """
+                
+                html_content = f"""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                  <meta charset="utf-8">
+                  <style>
+                    body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f9fafb; margin: 0; padding: 20px; color: #1f2937; }}
+                    .card {{ max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }}
+                    .header {{ background: #15803d; color: #ffffff; padding: 24px 32px; text-align: left; }}
+                    .body {{ padding: 32px; }}
+                    .table {{ width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }}
+                    .th {{ background-color: #f8fafc; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; padding: 8px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }}
+                    .badge {{ display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 700; background: #dcfce7; color: #15803d; text-transform: uppercase; }}
+                    .total-box {{ background: #f8fafc; border-radius: 12px; padding: 16px 20px; margin-top: 20px; border: 1px solid #f1f5f9; }}
+                    .footer {{ padding: 24px 32px; background: #f8fafc; text-align: center; border-top: 1px solid #f1f5f9; color: #64748b; font-size: 13px; line-height: 1.5; }}
+                  </style>
+                </head>
+                <body>
+                  <div class="card">
+                    <div class="header">
+                      <h2 style="margin: 0; font-size: 22px; font-weight: 700;">{business_name}</h2>
+                      <p style="margin: 4px 0 0 0; opacity: 0.9; font-size: 14px;">Receipt #{str(invoice.id)[:8].upper()}</p>
+                    </div>
+                    
+                    <div class="body">
+                      <h3 style="margin-top: 0; color: #111827; font-size: 18px;">Hello {customer_name}! 👋</h3>
+                      <p style="color: #4b5563; font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
+                        Thank you so much for visiting <strong>{business_name}</strong>! It was an absolute pleasure serving you today. We hope you had a wonderful experience, and <strong>we look forward to welcoming you back again soon!</strong>
+                      </p>
+                      
+                      <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 600; color: #374151; font-size: 14px;">Order Summary</span>
+                        <span class="badge">{invoice.status}</span>
+                      </div>
+                      
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th class="th">Item</th>
+                            <th class="th" style="text-align: center;">Qty</th>
+                            <th class="th" style="text-align: right;">Price</th>
+                            <th class="th" style="text-align: right;">Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {lines_table_rows}
+                        </tbody>
+                      </table>
+                      
+                      <div class="total-box">
+                        <div style="display: flex; justify-content: space-between; font-size: 14px; color: #64748b; margin-bottom: 6px;">
+                          <span>Subtotal</span>
+                          <span>₹{invoice.total:.2f}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; color: #15803d; border-top: 1px solid #e2e8f0; padding-top: 8px; margin-top: 4px;">
+                          <span>Total Amount Paid</span>
+                          <span>₹{invoice.total:.2f}</span>
+                        </div>
+                      </div>
+                      
+                      <p style="color: #6b7280; font-size: 13px; margin-top: 24px; text-align: center;">
+                        📎 <em>A PDF copy of your official receipt is attached to this email.</em>
+                      </p>
+                    </div>
+                    
+                    <div class="footer">
+                      <p style="margin: 0; font-weight: 600; color: #374151;">Thank you for choosing {business_name}!</p>
+                      <p style="margin: 4px 0 0 0;">Have a wonderful day ahead! See you next time 😊</p>
+                    </div>
+                  </div>
+                </body>
+                </html>
+                """
                 
                 import os
                 import json
