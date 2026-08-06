@@ -16,7 +16,7 @@ class SupportTicketViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         ticket = serializer.save(
-            tenant_id=self.request.user.tenant_id,
+            tenant=self.request.user.business,
             user=self.request.user
         )
         
