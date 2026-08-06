@@ -61,7 +61,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 target_email = customer.email
                 
             if target_email:
-                business_name = request.user.business.name
+                business_name = request.user.business.name if getattr(request.user, 'business', None) else "Nexus ERP"
                 custom_from = request.data.get('from_email')
                 sender_email = custom_from or request.user.email or settings.DEFAULT_FROM_EMAIL
                 subject = f"Invoice {invoice.id} from {business_name}"
