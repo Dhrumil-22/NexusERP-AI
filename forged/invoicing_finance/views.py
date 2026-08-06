@@ -278,10 +278,11 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                         p.setFont("Helvetica", 10)
                         p.setFillColor(colors.HexColor("#1f2937"))
                         p.drawString(50, y, str(line.description)[:40])
-                        p.drawCentredString(320, y, str(line.quantity))
-                        p.drawRightString(440, y, f"₹{line.unit_price:.2f}")
+                        qty_str = str(int(line.quantity)) if float(line.quantity).is_integer() else f"{float(line.quantity):.2f}"
+                        p.drawCentredString(320, y, qty_str)
+                        p.drawRightString(440, y, f"Rs. {line.unit_price:.2f}")
                         line_total = line.quantity * line.unit_price
-                        p.drawRightString(562, y, f"₹{line_total:.2f}")
+                        p.drawRightString(562, y, f"Rs. {line_total:.2f}")
                         
                         # Subtle row border
                         p.setStrokeColor(colors.HexColor("#f3f4f6"))
@@ -305,13 +306,13 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                     p.setFillColor(colors.HexColor("#6b7280"))
                     p.drawString(300, y, "Subtotal:")
                     p.setFillColor(colors.HexColor("#111827"))
-                    p.drawRightString(562, y, f"₹{invoice.total:.2f}")
+                    p.drawRightString(562, y, f"Rs. {invoice.total:.2f}")
                     
                     y -= 25
                     p.setFont("Helvetica-Bold", 14)
                     p.setFillColor(colors.HexColor("#15803d"))
                     p.drawString(300, y, "Total Amount:")
-                    p.drawRightString(562, y, f"₹{invoice.total:.2f}")
+                    p.drawRightString(562, y, f"Rs. {invoice.total:.2f}")
                     
                     if not is_bill:
                         y -= 20
@@ -319,14 +320,14 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                         p.setFillColor(colors.HexColor("#6b7280"))
                         p.drawString(300, y, "Amount Paid:")
                         p.setFillColor(colors.HexColor("#16a34a"))
-                        p.drawRightString(562, y, f"₹{paid_amount:.2f}")
+                        p.drawRightString(562, y, f"Rs. {paid_amount:.2f}")
                         
                         y -= 18
                         p.setFont("Helvetica-Bold", 10)
                         p.setFillColor(colors.HexColor("#374151"))
                         p.drawString(300, y, "Balance Due:")
                         p.setFillColor(colors.HexColor("#ef4444") if balance_due > 0 else colors.HexColor("#6b7280"))
-                        p.drawRightString(562, y, f"₹{balance_due:.2f}")
+                        p.drawRightString(562, y, f"Rs. {balance_due:.2f}")
                         
                     # Footer
                     p.setFont("Helvetica", 10)
