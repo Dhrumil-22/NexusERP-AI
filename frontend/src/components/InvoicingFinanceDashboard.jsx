@@ -209,13 +209,17 @@ export function InvoicingFinanceDashboard() {
               <span style="color: #666;">Subtotal:</span>
               <span>₹${parseFloat(selectedInvoice.total).toFixed(2)}</span>
             </div>
-            <div class="totals-row">
-              <span style="color: #666;">Amount Paid:</span>
-              <span style="color: #16a34a;">-₹${(parseFloat(selectedInvoice.total) - calculateBalance(selectedInvoice)).toFixed(2)}</span>
-            </div>
             <div class="totals-row grand-total">
-              <span>Balance Due:</span>
-              <span>₹${calculateBalance(selectedInvoice).toFixed(2)}</span>
+              <span>Total Amount:</span>
+              <span>₹${parseFloat(selectedInvoice.total).toFixed(2)}</span>
+            </div>
+            <div class="totals-row" style="margin-top: 10px; font-size: 0.95rem;">
+              <span style="color: #666;">Amount Paid:</span>
+              <span style="color: #16a34a; font-weight: 600;">₹${(parseFloat(selectedInvoice.total) - calculateBalance(selectedInvoice)).toFixed(2)}</span>
+            </div>
+            <div class="totals-row" style="margin-top: 4px; padding-top: 6px; border-top: 1px dashed #ddd; font-size: 0.95rem;">
+              <span style="color: ${calculateBalance(selectedInvoice) > 0 ? '#ef4444' : '#666'};">Balance Due:</span>
+              <span style="color: ${calculateBalance(selectedInvoice) > 0 ? '#ef4444' : '#666'}; font-weight: 600;">₹${calculateBalance(selectedInvoice).toFixed(2)}</span>
             </div>
           </div>
           
@@ -423,25 +427,31 @@ export function InvoicingFinanceDashboard() {
                     ₹{parseFloat(selectedInvoice.total).toFixed(2)}
                   </span>
                 </div>
-                <div className="flex justify-between items-center text-sm">
+                <div className="pt-2 mt-2 border-t border-border/50 flex justify-between items-center font-bold">
+                  <span>Total Amount</span>
+                  <span className="font-mono text-xl" style={{ color: themeColor }}>
+                    ₹{parseFloat(selectedInvoice.total).toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm pt-2">
                   <span className="text-muted-foreground">Amount Paid</span>
-                  <span className="font-mono text-green-600">
-                    -₹
+                  <span className="font-mono text-green-600 font-semibold">
+                    ₹
                     {(
                       parseFloat(selectedInvoice.total) -
                       calculateBalance(selectedInvoice)
                     ).toFixed(2)}
                   </span>
                 </div>
-                <div className="pt-2 mt-2 border-t border-border/50 flex justify-between items-center font-bold">
-                  <span>Amount Due</span>
+                <div className="pt-2 mt-1 border-t border-dashed border-border/60 flex justify-between items-center text-sm font-semibold">
+                  <span className="text-muted-foreground">Balance Due</span>
                   <span
-                    className="font-mono text-lg"
+                    className="font-mono"
                     style={{
                       color:
                         calculateBalance(selectedInvoice) > 0
                           ? "#ef4444"
-                          : themeColor,
+                          : "#6b7280",
                     }}
                   >
                     ₹{calculateBalance(selectedInvoice).toFixed(2)}
