@@ -41,6 +41,7 @@ urlpatterns = [
     path('api/kot/', include('kitchen_kot.urls')),
     path('api/attendance/', include('attendance.urls')),
     path('api/purchase/', include('purchase_supplier.urls')),
+    path('api/customer_care/', include('customer_care.urls')),
 ]
 
 if settings.DEBUG:

@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "baseUrl": "src",
+    "target": "es2022",
+    "lib": ["es2022", "dom"],
     "skipLibCheck": true,
     "types": []
   },

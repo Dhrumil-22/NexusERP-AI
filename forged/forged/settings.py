@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'reports_analytics',
     'service_packages',
     'projects',
+    'customer_care',
     'notifications',
     'table_order_mgmt',
     'kitchen_kot',

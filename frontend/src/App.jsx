@@ -30,6 +30,7 @@ import { PurchaseSupplierDashboard } from "./components/PurchaseSupplierDashboar
 import { SalesOrdersDashboard } from "./components/SalesOrdersDashboard";
 import { InvoicingFinanceDashboard } from "./components/InvoicingFinanceDashboard";
 import { ServicePackagesDashboard } from "./components/ServicePackagesDashboard";
+import { CustomerCareDashboard } from "./components/CustomerCareDashboard";
 import { useModuleManifests } from "./hooks/useModuleManifests";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { HeroPage } from "./components/HeroPage";
@@ -155,7 +156,7 @@ function ModuleView({ manifests, token }) {
 
   if (
     !manifest &&
-    !["auth", "attendance", "notifications"].includes(moduleId)
+    !["auth", "attendance", "notifications", "customer_care"].includes(moduleId)
   ) {
     return (
       <div className="p-8 text-destructive border rounded m-8 bg-destructive/10">
@@ -230,6 +231,10 @@ function ModuleView({ manifests, token }) {
 
   if (moduleId === "attendance") {
     return <AttendanceDashboard />;
+  }
+
+  if (moduleId === "customer_care") {
+    return <CustomerCareDashboard />;
   }
 
   return (
