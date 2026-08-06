@@ -149,7 +149,7 @@ function Layout() {
       </div>
       
       {/* Floating AI Consultant Button */}
-      {businessName !== "Nexus AI Admin" && (
+      {businessName !== "Nexus AI Admin" && (role === "Admin" || currentUser?.assigned_modules?.includes("customer_care")) && (
         <button
           onClick={() => window.location.href = "/module/customer_care"}
           className="fixed bottom-6 right-6 p-4 rounded-full text-white shadow-lg hover:scale-105 transition-all z-50 flex items-center justify-center"

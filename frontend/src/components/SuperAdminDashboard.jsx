@@ -147,6 +147,9 @@ export function SuperAdminDashboard() {
               className="absolute top-0 right-0 w-24 h-24 rounded-bl-full opacity-10 transition-transform group-hover:scale-110"
               style={{ backgroundColor: b.theme_color }}
             />
+            {b.unread_support_tickets_count > 0 && (
+              <div className="absolute top-4 right-4 w-4 h-4 bg-red-500 rounded-full shadow-lg shadow-red-500/50 animate-pulse z-20" title={`${b.unread_support_tickets_count} Open Support Tickets`} />
+            )}
             <h3 className="text-xl font-bold mb-2 truncate z-10">{b.name}</h3>
             <div className="flex items-center gap-2 text-muted-foreground z-10">
               <Users className="w-4 h-4" />
@@ -262,10 +265,59 @@ export function SuperAdminDashboard() {
                   </div>
                 </div>
               </div>
+              
+              <div className="border-t border-border/50 pt-6 mt-4">
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                  Customer Care Tickets
+                </h3>
+                <BusinessTicketsList businessId={selectedBusiness.business_id} token={token} />
+              </div>
             </div>
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function BusinessTicketsList({ businessId, token }) {
+  const { data: tickets, isLoading } = useQuery({
+    queryKey: ["superAdminTickets", businessId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `${API_BASE}/api/auth/super_admin/businesses/${businessId}/tickets/`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return res.data;
+    },
+    enabled: !!businessId && !!token
+  });
+
+  if (isLoading) return <div className="text-muted-foreground text-sm">Loading tickets...</div>;
+  if (!tickets || tickets.length === 0) return <div className="text-muted-foreground text-sm italic">No support tickets submitted by this business yet.</div>;
+
+  return (
+    <div className="space-y-4 max-h-[300px] overflow-y-auto p-2 custom-scrollbar border border-border/30 rounded-xl bg-background/50">
+      {tickets.map(t => (
+        <div key={t.id} className="p-4 bg-secondary/10 rounded-xl border border-border/30">
+          <div className="text-xs text-muted-foreground mb-2 flex items-center justify-between">
+             <span><span className="font-bold">{t.user}</span> • {new Date(t.created_at).toLocaleString()}</span>
+             {t.status === 'open' ? (
+                <span className="px-2 py-0.5 rounded-full bg-red-500/10 text-red-500 font-bold border border-red-500/20">Open</span>
+             ) : (
+                <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 font-bold border border-green-500/20">Resolved</span>
+             )}
+          </div>
+          <p className="text-sm font-medium mb-3 text-foreground/90">{t.message}</p>
+          {t.ai_response && (
+            <div className="text-sm bg-primary/10 p-3 rounded-lg border border-primary/20">
+              <span className="font-bold text-primary block mb-1">AI Response:</span> 
+              <span className="text-foreground/80 leading-relaxed whitespace-pre-wrap">{t.ai_response}</span>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 }

@@ -150,10 +150,12 @@ class SuperAdminBusinessListView(APIView):
         if request.user.business.name != 'Nexus AI Admin':
             return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
         
+        from customer_care.models import SupportTicket
         businesses = Business.objects.all()
         data = []
         for b in businesses:
             employees = User.objects.filter(business=b)
+            unread_tickets = SupportTicket.objects.filter(tenant=b, status='open').count()
             data.append({
                 'business_id': str(b.business_id),
                 'name': b.name,
@@ -163,6 +165,29 @@ class SuperAdminBusinessListView(APIView):
                 'ai_prompt': b.ai_prompt or "Not recorded",
                 'enabled_modules_count': len(b.enabled_modules) if isinstance(b.enabled_modules, list) else 0,
                 'employee_count': employees.count(),
-                'usernames': [u.username for u in employees]
+                'usernames': [u.username for u in employees],
+                'unread_support_tickets_count': unread_tickets
+            })
+        return Response(data)
+
+class SuperAdminBusinessTicketsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, business_id):
+        if request.user.business.name != 'Nexus AI Admin':
+            return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
+        
+        from customer_care.models import SupportTicket
+        tickets = SupportTicket.objects.filter(tenant_id=business_id).order_by('-created_at')
+        
+        data = []
+        for t in tickets:
+            data.append({
+                'id': str(t.id),
+                'message': t.message,
+                'ai_response': t.ai_response,
+                'status': t.status,
+                'created_at': t.created_at,
+                'user': t.user.username
             })
         return Response(data)

@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import RegisterBusinessView, LoginView, MeView, PasswordResetView, SessionViewSet, EmployeeViewSet, SuperAdminBusinessListView
+from .views import RegisterBusinessView, LoginView, MeView, PasswordResetView, SessionViewSet, EmployeeViewSet, SuperAdminBusinessListView, SuperAdminBusinessTicketsView
 
 router = DefaultRouter()
 router.register(r'sessions', SessionViewSet, basename='auth-session')
@@ -12,5 +12,6 @@ urlpatterns = [
     path('me/', MeView.as_view(), name='me'),
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
     path('super_admin/businesses/', SuperAdminBusinessListView.as_view(), name='super_admin_businesses'),
+    path('super_admin/businesses/<uuid:business_id>/tickets/', SuperAdminBusinessTicketsView.as_view(), name='super_admin_business_tickets'),
     path('', include(router.urls)),
 ]
