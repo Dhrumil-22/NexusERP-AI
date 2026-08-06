@@ -180,11 +180,10 @@ class MeView(APIView):
     def patch(self, request):
         user = request.user
         updated = False
-        if 'email' in request.data:
-            new_email = str(request.data['email']).strip()
-            if new_email:
-                user.email = new_email
-                updated = True
+        email_val = request.data.get('email') or request.POST.get('email')
+        if email_val:
+            user.email = str(email_val).strip()
+            updated = True
         if 'avatar' in request.FILES:
             import base64
             avatar_file = request.FILES['avatar']
