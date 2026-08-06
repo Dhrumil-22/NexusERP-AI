@@ -133,6 +133,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                             p.showPage()
                             y = 750
                             
+                    is_bill = getattr(invoice, 'document_type', 'invoice') == 'bill'
                     paid_amount = sum(float(p.amount) for p in invoice.payments.all()) if hasattr(invoice, 'payments') and invoice.payments.exists() else (float(invoice.total) if invoice.status == 'paid' else 0.0)
                     balance_due = max(0.0, float(invoice.total) - paid_amount)
                     
@@ -148,14 +149,15 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                     p.drawString(450, y, f"₹{invoice.total:.2f}")
                     y -= 20
                     
-                    p.setFont("Helvetica", 10)
-                    p.drawString(300, y, "Amount Paid:")
-                    p.drawString(450, y, f"₹{paid_amount:.2f}")
-                    y -= 18
-                    
-                    p.setFont("Helvetica-Bold", 10)
-                    p.drawString(300, y, "Balance Due:")
-                    p.drawString(450, y, f"₹{balance_due:.2f}")
+                    if not is_bill:
+                        p.setFont("Helvetica", 10)
+                        p.drawString(300, y, "Amount Paid:")
+                        p.drawString(450, y, f"₹{paid_amount:.2f}")
+                        y -= 18
+                        
+                        p.setFont("Helvetica-Bold", 10)
+                        p.drawString(300, y, "Balance Due:")
+                        p.drawString(450, y, f"₹{balance_due:.2f}")
                     
                     # Footer
                     p.setFont("Helvetica-Oblique", 10)

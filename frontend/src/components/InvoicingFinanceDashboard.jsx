@@ -213,6 +213,9 @@ export function InvoicingFinanceDashboard() {
               <span>Total Amount:</span>
               <span>₹${parseFloat(selectedInvoice.total).toFixed(2)}</span>
             </div>
+            ${
+              selectedInvoice.document_type !== "bill" && activeTab !== "bills"
+                ? `
             <div class="totals-row" style="margin-top: 10px; font-size: 0.95rem;">
               <span style="color: #666;">Amount Paid:</span>
               <span style="color: #16a34a; font-weight: 600;">₹${(parseFloat(selectedInvoice.total) - calculateBalance(selectedInvoice)).toFixed(2)}</span>
@@ -221,6 +224,9 @@ export function InvoicingFinanceDashboard() {
               <span style="color: ${calculateBalance(selectedInvoice) > 0 ? '#ef4444' : '#666'};">Balance Due:</span>
               <span style="color: ${calculateBalance(selectedInvoice) > 0 ? '#ef4444' : '#666'}; font-weight: 600;">₹${calculateBalance(selectedInvoice).toFixed(2)}</span>
             </div>
+            `
+                : ""
+            }
           </div>
           
           <div class="footer">
@@ -433,30 +439,34 @@ export function InvoicingFinanceDashboard() {
                     ₹{parseFloat(selectedInvoice.total).toFixed(2)}
                   </span>
                 </div>
-                <div className="flex justify-between items-center text-sm pt-2">
-                  <span className="text-muted-foreground">Amount Paid</span>
-                  <span className="font-mono text-green-600 font-semibold">
-                    ₹
-                    {(
-                      parseFloat(selectedInvoice.total) -
-                      calculateBalance(selectedInvoice)
-                    ).toFixed(2)}
-                  </span>
-                </div>
-                <div className="pt-2 mt-1 border-t border-dashed border-border/60 flex justify-between items-center text-sm font-semibold">
-                  <span className="text-muted-foreground">Balance Due</span>
-                  <span
-                    className="font-mono"
-                    style={{
-                      color:
-                        calculateBalance(selectedInvoice) > 0
-                          ? "#ef4444"
-                          : "#6b7280",
-                    }}
-                  >
-                    ₹{calculateBalance(selectedInvoice).toFixed(2)}
-                  </span>
-                </div>
+                {selectedInvoice.document_type !== "bill" && activeTab !== "bills" && (
+                  <>
+                    <div className="flex justify-between items-center text-sm pt-2">
+                      <span className="text-muted-foreground">Amount Paid</span>
+                      <span className="font-mono text-green-600 font-semibold">
+                        ₹
+                        {(
+                          parseFloat(selectedInvoice.total) -
+                          calculateBalance(selectedInvoice)
+                        ).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="pt-2 mt-1 border-t border-dashed border-border/60 flex justify-between items-center text-sm font-semibold">
+                      <span className="text-muted-foreground">Balance Due</span>
+                      <span
+                        className="font-mono"
+                        style={{
+                          color:
+                            calculateBalance(selectedInvoice) > 0
+                              ? "#ef4444"
+                              : "#6b7280",
+                        }}
+                      >
+                        ₹{calculateBalance(selectedInvoice).toFixed(2)}
+                      </span>
+                    </div>
+                  </>
+                )}
               </div>
 
               {selectedInvoice.payments &&
