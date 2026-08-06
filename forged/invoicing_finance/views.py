@@ -200,7 +200,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                     # Top Left: Business Info
                     p.setFont("Helvetica-Bold", 16)
                     p.setFillColor(colors.HexColor("#111827"))
-                    p.drawString(50, y, str(business_name))
+                    p.drawString(50, y, str(business_name or "Nexus ERP"))
                     
                     if business_owner_name:
                         y -= 18
@@ -212,8 +212,9 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                         p.setFont("Helvetica", 9)
                         p.setFillColor(colors.HexColor("#6b7280"))
                         for addr_line in str(business_address).split('\n'):
-                            y -= 14
-                            p.drawString(50, y, addr_line.strip())
+                            if addr_line.strip():
+                                y -= 14
+                                p.drawString(50, y, addr_line.strip())
                             
                     # Top Right: BILL TO
                     y_right = height - 50
@@ -224,7 +225,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                     y_right -= 18
                     p.setFont("Helvetica-Bold", 14)
                     p.setFillColor(colors.HexColor("#111827"))
-                    p.drawRightString(562, y_right, str(customer_name))
+                    p.drawRightString(562, y_right, str(customer_name or "Valued Customer"))
                     
                     # Move y down past header
                     y = min(y - 35, y_right - 35)
@@ -254,8 +255,9 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                     p.setFont("Helvetica-Bold", 9)
                     p.drawString(50, y, "Status:")
                     p.setFont("Helvetica-Bold", 9)
-                    p.setFillColor(colors.HexColor("#15803d") if invoice.status.lower() == 'paid' else colors.HexColor("#ef4444"))
-                    p.drawString(95, y, invoice.status.upper())
+                    inv_status = str(getattr(invoice, 'status', 'paid')).upper()
+                    p.setFillColor(colors.HexColor("#15803d") if inv_status == 'PAID' else colors.HexColor("#ef4444"))
+                    p.drawString(95, y, inv_status)
                     
                     # Divider line
                     y -= 25
@@ -277,11 +279,16 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                         y -= 20
                         p.setFont("Helvetica", 10)
                         p.setFillColor(colors.HexColor("#1f2937"))
-                        p.drawString(50, y, str(line.description)[:40])
-                        qty_str = str(int(line.quantity)) if float(line.quantity).is_integer() else f"{float(line.quantity):.2f}"
+                        p.drawString(50, y, str(line.description or '')[:40])
+                        
+                        qty_val = float(line.quantity or 0)
+                        qty_str = str(int(qty_val)) if qty_val.is_integer() else f"{qty_val:.2f}"
                         p.drawCentredString(320, y, qty_str)
-                        p.drawRightString(440, y, f"Rs. {line.unit_price:.2f}")
-                        line_total = line.quantity * line.unit_price
+                        
+                        price_val = float(line.unit_price or 0)
+                        p.drawRightString(440, y, f"Rs. {price_val:.2f}")
+                        
+                        line_total = qty_val * price_val
                         p.drawRightString(562, y, f"Rs. {line_total:.2f}")
                         
                         # Subtle row border
@@ -293,8 +300,9 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                             p.showPage()
                             y = height - 50
                             
-                    paid_amount = sum(float(p.amount) for p in invoice.payments.all()) if hasattr(invoice, 'payments') and invoice.payments.exists() else (float(invoice.total) if invoice.status == 'paid' else 0.0)
-                    balance_due = max(0.0, float(invoice.total) - paid_amount)
+                    inv_total = float(invoice.total or 0)
+                    paid_amount = sum(float(p.amount) for p in invoice.payments.all()) if hasattr(invoice, 'payments') and invoice.payments.exists() else (inv_total if inv_status == 'PAID' else 0.0)
+                    balance_due = max(0.0, inv_total - paid_amount)
                     
                     # Totals Section (Right Aligned)
                     y -= 30
@@ -306,13 +314,13 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                     p.setFillColor(colors.HexColor("#6b7280"))
                     p.drawString(300, y, "Subtotal:")
                     p.setFillColor(colors.HexColor("#111827"))
-                    p.drawRightString(562, y, f"Rs. {invoice.total:.2f}")
+                    p.drawRightString(562, y, f"Rs. {inv_total:.2f}")
                     
                     y -= 25
                     p.setFont("Helvetica-Bold", 14)
                     p.setFillColor(colors.HexColor("#15803d"))
                     p.drawString(300, y, "Total Amount:")
-                    p.drawRightString(562, y, f"Rs. {invoice.total:.2f}")
+                    p.drawRightString(562, y, f"Rs. {inv_total:.2f}")
                     
                     if not is_bill:
                         y -= 20
@@ -340,7 +348,9 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                     buffer.seek(0)
                     pdf_b64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
                 except Exception as pdf_err:
-                    print(f"PDF generation warning: {pdf_err}")
+                    import traceback
+                    traceback.print_exc()
+                    print(f"PDF generation error: {pdf_err}")
                 
                 BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '').strip()
                 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '').strip()
