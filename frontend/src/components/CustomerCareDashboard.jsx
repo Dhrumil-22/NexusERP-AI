@@ -15,7 +15,7 @@ export function CustomerCareDashboard() {
   const fetchTickets = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_BASE}/api/customer_care/tickets/`, {
+      const res = await axios.get(`${API_BASE}/api/growth_consultation/requests/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTickets(res.data);
@@ -32,7 +32,7 @@ export function CustomerCareDashboard() {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `${API_BASE}/api/customer_care/tickets/`,
+        `${API_BASE}/api/growth_consultation/requests/`,
         { message },
         { headers: { Authorization: `Bearer ${token}` } }
       );
