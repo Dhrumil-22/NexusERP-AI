@@ -280,7 +280,7 @@ export function TableOrderDashboard() {
         </div>
 
         {/* Order Details Panel */}
-        <div className="w-96 shrink-0 glass-panel rounded-2xl p-6 border border-border/50 flex flex-col">
+        <div className="w-full lg:w-96 shrink-0 glass-panel rounded-2xl p-6 border border-border/50 flex flex-col">
           {activeTable ? (
             <div className="h-full flex flex-col">
               <h2 className="text-2xl font-black mb-1">
