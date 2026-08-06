@@ -36,6 +36,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { HeroPage } from "./components/HeroPage";
 import { Login } from "./components/Login";
 import { AIBusinessSetup } from "./components/AIBusinessSetup";
+import { DebugConsole } from "./components/DebugConsole";
 
 const queryClient = new QueryClient();
 
@@ -335,6 +336,7 @@ function AuthWrapper() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <DebugConsole />
       <AuthProvider>
         <BrowserRouter>
           <AuthWrapper />
