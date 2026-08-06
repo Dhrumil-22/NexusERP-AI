@@ -45,7 +45,14 @@ import { useCurrentUser } from "./hooks/useCurrentUser";
 function Layout() {
   const { token, businessId, themeColor, themeMode, role, businessName } =
     useAuth();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Default to false on mobile, will be controlled properly
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const {
     data: manifests,
     isLoading,
@@ -85,7 +92,8 @@ function Layout() {
 
   // Determine if employee uses top navbar or sidebar for modules
   const isEmployee = role !== "Admin";
-  const showSidebar = !isEmployee || functionalManifests.length > 3;
+  // Always show sidebar on mobile for navigation, otherwise follow rule
+  const showSidebar = isMobile || !isEmployee || functionalManifests.length > 3;
 
   return (
     <div className="flex flex-col h-screen relative overflow-hidden bg-background">
@@ -159,6 +167,15 @@ function Layout() {
           <MessageSquarePlus className="w-6 h-6" />
         </button>
       )}
+
+      {/* Screen Size Debugger */}
+      <div className="fixed bottom-2 left-2 z-[100] bg-black/80 text-white px-2 py-1 rounded text-xs font-mono font-bold">
+        <span className="sm:hidden">XS (Mobile)</span>
+        <span className="hidden sm:inline md:hidden">SM (Tablet)</span>
+        <span className="hidden md:inline lg:hidden">MD (Laptop)</span>
+        <span className="hidden lg:inline xl:hidden">LG (Desktop)</span>
+        <span className="hidden xl:inline">XL (Wide)</span>
+      </div>
     </div>
   );
 }
