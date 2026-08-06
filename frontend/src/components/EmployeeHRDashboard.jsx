@@ -69,18 +69,23 @@ export function EmployeeHRDashboard() {
       setRoles(roleRes.data);
       setShifts(shiftRes.data);
       setAttendance(attRes.data);
-      setAvailableModules(
-        modRes.data.filter(
-          (m) =>
-            ![
-              "business_setup",
-              "auth",
-              "module_registry",
-              "permissions",
-              "attendance",
-            ].includes(m.module_id),
-        ),
+      const filteredModules = modRes.data.filter(
+        (m) =>
+          ![
+            "business_setup",
+            "auth",
+            "module_registry",
+            "permissions",
+            "attendance",
+          ].includes(m.module_id),
       );
+      
+      // Manually add Customer Care since it's a native module not in registry
+      if (!filteredModules.find(m => m.module_id === "customer_care")) {
+        filteredModules.push({ module_id: "customer_care", name: "Customer Care" });
+      }
+      
+      setAvailableModules(filteredModules);
     } catch (err) {
       console.error(err);
     } finally {
