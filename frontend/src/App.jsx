@@ -66,12 +66,20 @@ function Layout() {
       const rect = el.getBoundingClientRect();
       
       // Check horizontal overflow (element is wider than screen)
-      if (rect.right > window.innerWidth) {
-        issues.push(`- [Overflow]: <${el.tagName.toLowerCase()} class="${el.className}"> extends past screen edge (Right: ${Math.round(rect.right)}px, Screen: ${window.innerWidth}px)`);
+      // Ignore if it's a minor sub-pixel difference
+      if (rect.right > window.innerWidth + 1) {
+        // Ignore elements that are safely inside a horizontally scrolling container
+        const isSafelyScrolled = el.closest('.overflow-x-auto') && el.tagName.toLowerCase() !== 'div';
+        if (!isSafelyScrolled) {
+          issues.push(`- [Overflow]: <${el.tagName.toLowerCase()} class="${el.className}"> extends past screen edge (Right: ${Math.round(rect.right)}px, Screen: ${window.innerWidth}px)`);
+        }
       }
       
       // Check horizontal scrollbar (content inside is wider than element)
-      if (el.scrollWidth > el.clientWidth && el.clientWidth > 0 && window.getComputedStyle(el).overflowX !== 'hidden' && window.getComputedStyle(el).overflowX !== 'clip') {
+      const hasScrollbar = el.scrollWidth > el.clientWidth && el.clientWidth > 0 && window.getComputedStyle(el).overflowX !== 'hidden' && window.getComputedStyle(el).overflowX !== 'clip';
+      
+      // Only report unexpected scrollbars (ignore intentionally scrollable containers)
+      if (hasScrollbar && !el.className.includes('overflow-x-auto') && !el.className.includes('overflow-y-auto')) {
         issues.push(`- [Scroll]: <${el.tagName.toLowerCase()} class="${el.className}"> has unexpected horizontal scrolling.`);
       }
     });
