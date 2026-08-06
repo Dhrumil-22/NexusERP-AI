@@ -55,49 +55,6 @@ function Layout() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const scanUIErrors = () => {
-    const issues = [];
-    const elements = document.querySelectorAll('*');
-    
-    elements.forEach((el) => {
-      // Exclude the debugger itself
-      if (el.closest('.z-\\[100\\]')) return;
-      
-      const rect = el.getBoundingClientRect();
-      
-      // Check horizontal overflow (element is wider than screen)
-      // Ignore if it's a minor sub-pixel difference
-      if (rect.right > window.innerWidth + 1) {
-        // Ignore elements that are safely inside a horizontally scrolling container
-        const isSafelyScrolled = el.closest('.overflow-x-auto') && el.tagName.toLowerCase() !== 'div';
-        if (!isSafelyScrolled) {
-          issues.push(`- [Overflow]: <${el.tagName.toLowerCase()} class="${el.className}"> extends past screen edge (Right: ${Math.round(rect.right)}px, Screen: ${window.innerWidth}px)`);
-        }
-      }
-      
-      // Check horizontal scrollbar (content inside is wider than element)
-      const hasScrollbar = el.scrollWidth > el.clientWidth && el.clientWidth > 0 && window.getComputedStyle(el).overflowX !== 'hidden' && window.getComputedStyle(el).overflowX !== 'clip';
-      
-      // Only report unexpected scrollbars (ignore intentionally scrollable containers)
-      if (hasScrollbar && !el.className.includes('overflow-x-auto') && !el.className.includes('overflow-y-auto')) {
-        issues.push(`- [Scroll]: <${el.tagName.toLowerCase()} class="${el.className}"> has unexpected horizontal scrolling.`);
-      }
-    });
-
-    if (issues.length === 0) {
-      alert("UI Scanner: No obvious layout errors found!");
-    } else {
-      // De-duplicate issues
-      const uniqueIssues = [...new Set(issues)];
-      const report = "UI Layout Error Report:\\n" + uniqueIssues.join('\\n');
-      navigator.clipboard.writeText(report).then(() => {
-        alert(`Found ${uniqueIssues.length} layout issues!\\nThe report has been COPIED to your clipboard.\\nYou can paste it to the AI.`);
-      }).catch(() => {
-        alert(`Found ${uniqueIssues.length} layout issues!\\n\\n${report}`);
-      });
-    }
-  };
-
   const {
     data: manifests,
     isLoading,
