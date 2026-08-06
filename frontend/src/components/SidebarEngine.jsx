@@ -63,7 +63,7 @@ const ICON_MAP = {
 };
 
 export function SidebarEngine({ manifests, isOpen = true, setIsOpen }) {
-  const { themeColor, role, logout } = useAuth();
+  const { themeColor, role, logout, businessName } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -114,7 +114,7 @@ export function SidebarEngine({ manifests, isOpen = true, setIsOpen }) {
       >
         {/* Mobile Header in Sidebar */}
         <div className="md:hidden flex items-center justify-between p-4 border-b border-border/40 shrink-0">
-          <span className="font-bold text-lg tracking-tight">NexusERP</span>
+          <span className="font-bold text-lg tracking-tight capitalize">{businessName || "NexusERP"}</span>
           <button
             onClick={() => setIsOpen && setIsOpen(false)}
             className="p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors"
