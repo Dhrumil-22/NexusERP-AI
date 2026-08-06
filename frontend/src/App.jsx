@@ -152,8 +152,9 @@ function Layout() {
       {businessName !== "Nexus AI Admin" && (
         <button
           onClick={() => window.location.href = "/module/customer_care"}
-          className="fixed bottom-6 right-6 p-4 rounded-full bg-green-600 text-white shadow-lg shadow-green-600/30 hover:bg-green-700 hover:scale-105 transition-all z-50 flex items-center justify-center"
-          title="AI Growth Consultant"
+          className="fixed bottom-6 right-6 p-4 rounded-full text-white shadow-lg hover:scale-105 transition-all z-50 flex items-center justify-center"
+          style={{ backgroundColor: themeColor, boxShadow: `0 10px 15px -3px ${themeColor}40` }}
+          title="Customer Care"
         >
           <MessageSquarePlus className="w-6 h-6" />
         </button>
