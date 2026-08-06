@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.exceptions import PermissionDenied
 from rest_framework import status, viewsets, permissions
 from django.db import transaction
 from django.contrib.auth import authenticate
@@ -232,12 +233,12 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Enforce business ID from the logged-in boss
         if self.request.user.role not in ['Admin', 'Manager']:
-            raise permissions.PermissionDenied("Only Admin or Manager can create employees.")
+            raise PermissionDenied("Only Admin or Manager can create employees.")
         serializer.save(business=self.request.user.business, role='Staff')
 
     def perform_update(self, serializer):
         if self.request.user.role not in ['Admin', 'Manager']:
-            raise permissions.PermissionDenied("Only Admin or Manager can update employees.")
+            raise PermissionDenied("Only Admin or Manager can update employees.")
         
         # Prevent updating password through standard update (requires separate endpoint if needed)
         if 'password' in serializer.validated_data:
