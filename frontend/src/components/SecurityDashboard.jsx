@@ -58,7 +58,7 @@ export function SecurityDashboard() {
     : logoUrl;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-8">
+    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-4 sm:p-8">
       <div className="flex flex-col items-center justify-center text-center space-y-2 mb-12">
         <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
           Profile & Settings

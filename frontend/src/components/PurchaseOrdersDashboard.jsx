@@ -48,7 +48,7 @@ export function PurchaseOrdersDashboard() {
   ).length;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-8">
+    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-4 sm:p-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -128,7 +128,7 @@ export function PurchaseOrdersDashboard() {
                   <tr>
                     <td
                       colSpan={5}
-                      className="p-8 text-center text-muted-foreground"
+                      className="p-4 sm:p-8 text-center text-muted-foreground"
                     >
                       No purchase orders found. Draft one to get started.
                     </td>

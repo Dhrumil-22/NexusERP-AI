@@ -40,13 +40,13 @@ export function SuperAdminDashboard() {
 
   if (isLoading)
     return (
-      <div className="p-8 text-muted-foreground">
+      <div className="p-4 sm:p-8 text-muted-foreground">
         Loading platform statistics...
       </div>
     );
   if (error)
     return (
-      <div className="p-8 text-destructive">
+      <div className="p-4 sm:p-8 text-destructive">
         Failed to load data. Ensure you have Super Admin privileges.
       </div>
     );
@@ -56,14 +56,14 @@ export function SuperAdminDashboard() {
   const totalBusinesses = businesses.length;
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-12">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-12">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-background to-primary/5 border border-primary/20 shadow-2xl p-10 md:p-14"
       >
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-primary/20 rounded-full blur-[100px] animate-pulse pointer-events-none" />
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[95%] md:w-96 h-96 bg-primary/20 rounded-full blur-[100px] animate-pulse pointer-events-none" />
         <div className="relative z-10 max-w-3xl">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -182,7 +182,7 @@ export function SuperAdminDashboard() {
               <X className="w-5 h-5" />
             </button>
 
-            <div className="p-8 flex flex-col gap-8">
+            <div className="p-8 flex flex-col gap-4 sm:p-8">
               <div className="flex items-start gap-6 border-b border-border/50 pb-6">
                 {selectedBusiness.logo ? (
                   <img

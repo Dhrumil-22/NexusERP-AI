@@ -126,7 +126,7 @@ export function SalesOrdersDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-8 h-full flex flex-col">
+    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-4 sm:p-8 h-full flex flex-col">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-3">
@@ -149,7 +149,7 @@ export function SalesOrdersDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm">
-            <table className="w-full text-left text-sm">
+            <div className="overflow-x-auto w-full"><table className="w-full text-left text-sm">
               <thead className="bg-muted/50 border-b border-border/50">
                 <tr>
                   <th className="px-4 py-3 font-semibold text-muted-foreground">
@@ -233,7 +233,7 @@ export function SalesOrdersDashboard() {
                   </tr>
                 )}
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>
 
@@ -344,7 +344,7 @@ export function SalesOrdersDashboard() {
               )}
             </div>
           ) : (
-            <div className="glass-panel rounded-2xl p-8 border border-border/50 text-center flex flex-col items-center justify-center h-full text-muted-foreground min-h-[300px]">
+            <div className="glass-panel rounded-2xl p-4 sm:p-8 border border-border/50 text-center flex flex-col items-center justify-center h-full text-muted-foreground min-h-[300px]">
               <Package className="w-12 h-12 mb-4 opacity-20" />
               <p>Select an order to view details and add items.</p>
             </div>

@@ -162,7 +162,7 @@ export function AIBusinessSetup() {
 
       <div className="flex-1 w-full h-full overflow-y-auto relative z-10 flex flex-col items-center justify-center p-6">
         {/* Top Header / AI Badge */}
-        <div className="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1.5 rounded-full bg-card border border-border backdrop-blur-md shadow-sm">
+        <div className="absolute top-4 sm:p-8 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1.5 rounded-full bg-card border border-border backdrop-blur-md shadow-sm">
           <Sparkles
             className="w-4 h-4 text-primary"
             style={{ color: themeColor }}
@@ -175,7 +175,7 @@ export function AIBusinessSetup() {
         {/* Theme Toggle Button */}
         <button
           onClick={toggleThemeMode}
-          className="absolute top-8 right-8 w-10 h-10 rounded-full bg-card border border-border shadow-sm flex items-center justify-center text-foreground hover:bg-accent/50 transition-colors z-20"
+          className="absolute top-4 sm:p-8 right-8 w-10 h-10 rounded-full bg-card border border-border shadow-sm flex items-center justify-center text-foreground hover:bg-accent/50 transition-colors z-20"
         >
           {themeMode === "dark" ? (
             <Sun className="w-5 h-5" />
@@ -204,7 +204,7 @@ export function AIBusinessSetup() {
                 </p>
               </div>
 
-              <div className="bg-card border border-border rounded-3xl p-8 backdrop-blur-xl shadow-2xl space-y-6">
+              <div className="bg-card border border-border rounded-3xl p-4 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
                 {/* Minimalist Input Group */}
                 <div className="space-y-5">
                   <div className="relative group">
@@ -351,7 +351,7 @@ export function AIBusinessSetup() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="E.g., We are a boutique hotel with a small restaurant. We need to manage room bookings, track kitchen inventory, and handle employee shifts..."
-                    className="w-full min-h-[200px] bg-transparent p-8 text-lg text-foreground placeholder:text-muted-foreground focus:outline-none resize-none leading-relaxed"
+                    className="w-full min-h-[200px] bg-transparent p-4 sm:p-8 text-lg text-foreground placeholder:text-muted-foreground focus:outline-none resize-none leading-relaxed"
                     disabled={isGenerating}
                   />
 
@@ -417,7 +417,7 @@ export function AIBusinessSetup() {
                 </p>
               </div>
 
-              <div className="bg-card border border-border rounded-3xl p-8 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+              <div className="bg-card border border-border rounded-3xl p-4 sm:p-8 backdrop-blur-xl shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-background rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
                 <h3 className="font-semibold text-lg text-foreground mb-6 flex items-center gap-2">

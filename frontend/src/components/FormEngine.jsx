@@ -143,7 +143,7 @@ export function FormEngine({ manifest, formId, token }) {
 
   return (
     <div className="glass-panel rounded-2xl text-card-foreground animate-slide-up shadow-lg">
-      <div className="flex flex-col space-y-1.5 p-8 border-b border-border/50">
+      <div className="flex flex-col space-y-1.5 p-4 sm:p-8 border-b border-border/50">
         <h3 className="font-bold leading-none tracking-tight text-xl text-gradient inline-block">
           {formId.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
         </h3>
@@ -151,7 +151,7 @@ export function FormEngine({ manifest, formId, token }) {
           Fill out the details below.
         </p>
       </div>
-      <div className="p-8">
+      <div className="p-4 sm:p-8">
         <form
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"

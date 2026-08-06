@@ -57,7 +57,7 @@ export function PermissionsDashboard() {
   }, [token]);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-8">
+    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-4 sm:p-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
@@ -200,7 +200,7 @@ function OverridesTab({ overrides, globalPermissions }) {
       </div>
 
       {overrides.length === 0 ? (
-        <div className="p-8 text-center bg-muted/20 rounded-xl border border-dashed border-border/50">
+        <div className="p-4 sm:p-8 text-center bg-muted/20 rounded-xl border border-dashed border-border/50">
           <UserCog className="w-8 h-8 text-muted-foreground mx-auto mb-2 opacity-50" />
           <p className="text-muted-foreground font-medium">
             No individual employee overrides found.
@@ -211,7 +211,7 @@ function OverridesTab({ overrides, globalPermissions }) {
           </p>
         </div>
       ) : (
-        <table className="w-full text-sm text-left">
+        <div className="overflow-x-auto w-full"><table className="w-full text-sm text-left">
           <thead className="text-xs bg-muted/50 text-muted-foreground border-b border-border/50 uppercase tracking-wider">
             <tr>
               <th className="px-4 py-3 font-medium">Employee ID</th>
@@ -242,7 +242,7 @@ function OverridesTab({ overrides, globalPermissions }) {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       )}
     </div>
   );

@@ -218,7 +218,7 @@ export function TopNavbar({
 
               <div className="max-h-[350px] overflow-y-auto">
                 {notifications.length === 0 ? (
-                  <div className="p-8 text-center text-muted-foreground text-sm italic">
+                  <div className="p-4 sm:p-8 text-center text-muted-foreground text-sm italic">
                     <Bell className="w-8 h-8 opacity-20 mx-auto mb-2" />
                     No notifications yet
                   </div>

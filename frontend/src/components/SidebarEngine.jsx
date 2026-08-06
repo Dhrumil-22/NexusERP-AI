@@ -59,7 +59,7 @@ const ICON_MAP = {
   attendance: Clock,
 };
 
-export function SidebarEngine({ manifests, isOpen = true }) {
+export function SidebarEngine({ manifests, isOpen = true, setIsOpen }) {
   const { themeColor, role, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -93,13 +93,23 @@ export function SidebarEngine({ manifests, isOpen = true }) {
   ];
 
   return (
-    <aside
-      className={cn(
-        "glass-panel border-r-0 h-full flex flex-col pt-6 relative z-40 transition-all duration-300 ease-in-out overflow-hidden shrink-0",
-        isOpen ? "w-64" : "w-20",
-      )}
-    >
-      <nav className="flex-1 overflow-y-auto px-3 space-y-2">
+    <>
+      {/* Mobile Overlay */}
+      <div 
+        className={cn(
+          "fixed inset-0 bg-background/80 backdrop-blur-sm z-40 transition-opacity md:hidden",
+          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        )}
+        onClick={() => setIsOpen && setIsOpen(false)}
+      />
+      <aside
+        className={cn(
+          "glass-panel border-r-0 h-full flex flex-col pt-6 relative z-50 transition-all duration-300 ease-in-out overflow-hidden shrink-0",
+          "fixed md:relative top-0 left-0 bottom-0",
+          isOpen ? "translate-x-0 w-64" : "-translate-x-full md:translate-x-0 md:w-20",
+        )}
+      >
+        <nav className="flex-1 overflow-y-auto px-3 space-y-2">
         {CATEGORIES.map((category) => {
           const catModules = manifests.filter((m) =>
             category.modules.includes(m.module_id),
@@ -181,5 +191,6 @@ export function SidebarEngine({ manifests, isOpen = true }) {
         </button>
       </div>
     </aside>
+    </>
   );
 }

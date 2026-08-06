@@ -50,7 +50,7 @@ export function BillingDashboard() {
     .reduce((acc, i) => acc + parseFloat(i.total), 0);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-8">
+    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-4 sm:p-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -132,7 +132,7 @@ export function BillingDashboard() {
                   <tr>
                     <td
                       colSpan={6}
-                      className="p-8 text-center text-muted-foreground"
+                      className="p-4 sm:p-8 text-center text-muted-foreground"
                     >
                       No invoices generated yet.
                     </td>
@@ -454,7 +454,7 @@ function InvoiceModal({ onClose, onSuccess }) {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-2 gap-4 sm:p-8">
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold">Discount (₹)</label>

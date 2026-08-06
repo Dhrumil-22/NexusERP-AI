@@ -190,7 +190,7 @@ export function InvoicingFinanceDashboard() {
             </div>
           </div>
           
-          <table>
+          <div className="overflow-x-auto w-full"><table>
             <thead>
               <tr>
                 <th>Item Description</th>
@@ -202,7 +202,7 @@ export function InvoicingFinanceDashboard() {
             <tbody>
               ${linesHtml || '<tr><td colspan="4" style="text-align:center; padding: 20px; color:#888;">No items</td></tr>'}
             </tbody>
-          </table>
+          </table></div>
           
           <div class="totals">
             <div class="totals-row">
@@ -240,7 +240,7 @@ export function InvoicingFinanceDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-8 h-full flex flex-col">
+    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-4 sm:p-8 h-full flex flex-col">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-3">
@@ -283,7 +283,7 @@ export function InvoicingFinanceDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm">
-            <table className="w-full text-left text-sm">
+            <div className="overflow-x-auto w-full"><table className="w-full text-left text-sm">
               <thead className="bg-muted/50 border-b border-border/50">
                 <tr>
                   <th className="px-4 py-3 font-semibold text-muted-foreground">
@@ -362,7 +362,7 @@ export function InvoicingFinanceDashboard() {
                     </tr>
                   )}
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>
 
@@ -509,7 +509,7 @@ export function InvoicingFinanceDashboard() {
               </button>
             </div>
           ) : (
-            <div className="glass-panel rounded-2xl p-8 border border-border/50 text-center flex flex-col items-center justify-center h-full text-muted-foreground min-h-[400px]">
+            <div className="glass-panel rounded-2xl p-4 sm:p-8 border border-border/50 text-center flex flex-col items-center justify-center h-full text-muted-foreground min-h-[400px]">
               <Banknote className="w-12 h-12 mb-4 opacity-20" />
               <p>
                 Select a {activeTab === "bill" ? "bill" : "invoice"} to view
@@ -678,7 +678,7 @@ export function InvoicingFinanceDashboard() {
 
       {statusMessage && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-card w-full max-w-sm rounded-2xl shadow-2xl border border-border/50 overflow-hidden text-center p-8">
+          <div className="bg-card w-full max-w-sm rounded-2xl shadow-2xl border border-border/50 overflow-hidden text-center p-4 sm:p-8">
             {statusMessage.type === "success" ? (
               <CheckCircle className="w-16 h-16 mx-auto mb-4" style={{ color: "#22c55e" }} />
             ) : (

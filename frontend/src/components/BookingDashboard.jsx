@@ -54,7 +54,7 @@ export function BookingDashboard() {
     );
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-8">
+    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-4 sm:p-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -74,7 +74,7 @@ export function BookingDashboard() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:p-8">
         {/* Appointments List */}
         <div className="glass-panel p-6 rounded-2xl flex flex-col hover:shadow-xl transition-all duration-300 border border-transparent hover:border-primary/20 space-y-6 md:col-span-2">
           <div className="flex items-center gap-3">
@@ -96,7 +96,7 @@ export function BookingDashboard() {
           ) : (
             <div className="space-y-3">
               {upcomingAppointments.length === 0 ? (
-                <div className="text-center p-8 text-muted-foreground border border-dashed border-border/50 rounded-xl">
+                <div className="text-center p-4 sm:p-8 text-muted-foreground border border-dashed border-border/50 rounded-xl">
                   No upcoming appointments.
                 </div>
               ) : (
@@ -168,7 +168,7 @@ export function BookingDashboard() {
           ) : (
             <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
               {availableSlots.length === 0 ? (
-                <div className="text-center p-8 text-muted-foreground border border-dashed border-border/50 rounded-xl text-sm">
+                <div className="text-center p-4 sm:p-8 text-muted-foreground border border-dashed border-border/50 rounded-xl text-sm">
                   No available slots found.
                 </div>
               ) : (

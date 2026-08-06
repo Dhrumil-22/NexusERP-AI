@@ -65,7 +65,7 @@ export function BarcodeCatalogDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-8">
+    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-4 sm:p-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -78,7 +78,7 @@ export function BarcodeCatalogDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:p-8">
         {/* Quick Scan Widget */}
         <div className="glass-panel p-6 rounded-2xl flex flex-col hover:shadow-xl transition-all duration-300 border border-transparent hover:border-primary/20 space-y-6 md:col-span-1">
           <div className="flex items-center gap-3">
@@ -187,7 +187,7 @@ export function BarcodeCatalogDashboard() {
                     <tr>
                       <td
                         colSpan={4}
-                        className="p-8 text-center text-muted-foreground border border-dashed border-border/50 rounded-xl mt-4 block"
+                        className="p-4 sm:p-8 text-center text-muted-foreground border border-dashed border-border/50 rounded-xl mt-4 block"
                       >
                         No variants in catalog yet.
                       </td>

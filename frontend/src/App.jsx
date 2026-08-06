@@ -115,9 +115,9 @@ function Layout() {
 
       <div className="flex flex-1 overflow-hidden relative z-10">
         {showSidebar && (
-          <SidebarEngine manifests={visibleManifests} isOpen={isSidebarOpen} />
+          <SidebarEngine manifests={visibleManifests} isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
         )}
-        <main className="flex-1 overflow-y-auto flex flex-col relative">
+        <main className="flex-1 overflow-y-auto flex flex-col relative w-full">
           <div className="flex-1 shrink-0">
             <Routes>
               <Route
@@ -152,7 +152,7 @@ function Layout() {
       {businessName !== "Nexus AI Admin" && (role === "Admin" || currentUser?.assigned_modules?.includes("customer_care")) && (
         <button
           onClick={() => window.location.href = "/module/customer_care"}
-          className="fixed bottom-6 right-6 p-4 rounded-full text-white shadow-lg hover:scale-105 transition-all z-50 flex items-center justify-center"
+          className="fixed bottom-4 right-4 md:bottom-6 md:right-6 p-4 rounded-full text-white shadow-lg hover:scale-105 transition-all z-50 flex items-center justify-center"
           style={{ backgroundColor: themeColor, boxShadow: `0 10px 15px -3px ${themeColor}40` }}
           title="Customer Care"
         >

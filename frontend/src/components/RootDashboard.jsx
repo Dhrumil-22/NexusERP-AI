@@ -116,7 +116,7 @@ export function RootDashboard() {
 
   if (role !== "Admin") {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-8 text-center animate-fade-in mt-32">
+      <div className="flex flex-col items-center justify-center h-full p-4 sm:p-8 text-center animate-fade-in mt-32">
         <h1 className="text-4xl font-extrabold tracking-tight mb-4">
           Welcome to {businessName || "Nexus ERP"}
         </h1>
@@ -128,7 +128,7 @@ export function RootDashboard() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8 animate-fade-in">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
