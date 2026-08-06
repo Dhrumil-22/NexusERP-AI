@@ -59,6 +59,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         )
 
     def perform_update(self, serializer):
+        old_email = serializer.instance.email
         username = serializer.validated_data.pop('username', None)
         password = serializer.validated_data.pop('password', None)
         assigned_modules = serializer.validated_data.pop('assigned_modules', None)
@@ -67,16 +68,30 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         
         if username:
             existing_user = User.objects.filter(username=username).first()
-            # If the username exists and it does not belong to this employee, raise error
-            if existing_user and existing_user.email != serializer.instance.email:
+            # If the username exists and it does not belong to this employee (by old_email), raise error
+            if existing_user and existing_user.email != old_email:
                 from rest_framework.exceptions import ValidationError
                 raise ValidationError({'username': 'This username is already taken.'})
         
         employee = serializer.save()
         
-        user = User.objects.filter(email=employee.email).first()
+        # Look up corresponding User by old email
+        user = User.objects.filter(email=old_email).first()
+        if not user and employee.email:
+            # Fallback: search by new email if old_email lookup failed
+            user = User.objects.filter(email=employee.email).first()
+            
         if user:
             needs_save = False
+            if employee.email and user.email != employee.email:
+                user.email = employee.email
+                needs_save = True
+            if employee.first_name and user.first_name != employee.first_name:
+                user.first_name = employee.first_name
+                needs_save = True
+            if employee.last_name and user.last_name != employee.last_name:
+                user.last_name = employee.last_name
+                needs_save = True
             if assigned_modules is not None:
                 user.assigned_modules = assigned_modules
                 needs_save = True
