@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import { User, Building, Mail, Shield, Camera, Key } from "lucide-react";
+import { User, Building, Mail, Shield, Camera, Key, Pencil, Check, X } from "lucide-react";
 
 import { API_BASE } from "../config";
 
@@ -9,6 +9,9 @@ export function SecurityDashboard() {
   const { token, themeColor, businessName, logoUrl , showStatus } = useAuth();
   const [uploading, setUploading] = useState(false);
   const [user, setUser] = useState(null);
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [emailInput, setEmailInput] = useState("");
+  const [savingEmail, setSavingEmail] = useState(false);
   const fileInputRef = useRef(null);
 
   const fetchMe = async () => {
@@ -48,6 +51,26 @@ export function SecurityDashboard() {
       showStatus("Error", "Failed to upload avatar.", "error");
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleSaveEmail = async () => {
+    if (!emailInput || !emailInput.trim()) return;
+    setSavingEmail(true);
+    try {
+      await axios.patch(
+        `${API_BASE}/api/auth/me/`,
+        { email: emailInput.trim() },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      await fetchMe();
+      setIsEditingEmail(false);
+      if (showStatus) showStatus("Success", "Email ID updated successfully!", "success");
+    } catch (err) {
+      console.error("Failed to update email", err);
+      if (showStatus) showStatus("Error", "Failed to update email.", "error");
+    } finally {
+      setSavingEmail(false);
     }
   };
 
@@ -137,18 +160,60 @@ export function SecurityDashboard() {
           </div>
 
           <div className="w-full flex-1 space-y-3 z-10 sm:mt-2">
-            <div className="flex items-center gap-3 p-4 rounded-2xl bg-muted/30 border border-border/50 shadow-sm">
-              <div className="p-2.5 rounded-xl bg-background shadow-sm text-muted-foreground">
-                <Mail className="w-4 h-4" />
-              </div>
-              <div>
-                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                  Email
+            <div className="flex items-center justify-between p-4 rounded-2xl bg-muted/30 border border-border/50 shadow-sm">
+              <div className="flex items-center gap-3 flex-1 mr-2">
+                <div className="p-2.5 rounded-xl bg-background shadow-sm text-muted-foreground shrink-0">
+                  <Mail className="w-4 h-4" />
                 </div>
-                <div className="text-foreground font-medium text-sm">
-                  {user?.email || "No email provided"}
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Registered Email ID
+                  </div>
+                  {isEditingEmail ? (
+                    <div className="flex items-center gap-2 mt-1">
+                      <input
+                        type="email"
+                        value={emailInput}
+                        onChange={(e) => setEmailInput(e.target.value)}
+                        className="flex-1 bg-background border border-primary/40 rounded-xl px-3 py-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+                        placeholder="yourname@gmail.com"
+                        autoFocus
+                      />
+                      <button
+                        onClick={handleSaveEmail}
+                        disabled={savingEmail}
+                        className="p-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shrink-0"
+                        title="Save Email"
+                      >
+                        <Check className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => setIsEditingEmail(false)}
+                        className="p-1.5 rounded-lg bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
+                        title="Cancel"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-foreground font-semibold text-sm truncate">
+                      {user?.email || "No email provided"}
+                    </div>
+                  )}
                 </div>
               </div>
+              {!isEditingEmail && (
+                <button
+                  onClick={() => {
+                    setEmailInput(user?.email || "");
+                    setIsEditingEmail(true);
+                  }}
+                  className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors shrink-0"
+                  title="Edit Email"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
+              )}
             </div>
 
             <div className="flex items-center gap-3 p-4 rounded-2xl bg-muted/30 border border-border/50 shadow-sm">

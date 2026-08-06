@@ -179,15 +179,23 @@ class MeView(APIView):
 
     def patch(self, request):
         user = request.user
+        updated = False
+        if 'email' in request.data:
+            new_email = str(request.data['email']).strip()
+            if new_email:
+                user.email = new_email
+                updated = True
         if 'avatar' in request.FILES:
             import base64
             avatar_file = request.FILES['avatar']
             encoded_string = base64.b64encode(avatar_file.read()).decode('utf-8')
             mime_type = avatar_file.content_type
             user.avatar_base64 = f"data:{mime_type};base64,{encoded_string}"
+            updated = True
+        if updated:
             user.save()
             return Response(UserSerializer(user).data)
-        return Response({"error": "No avatar provided"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "No valid data provided for update"}, status=status.HTTP_400_BAD_REQUEST)
 
 class PasswordResetView(APIView):
     permission_classes = [permissions.IsAuthenticated]
