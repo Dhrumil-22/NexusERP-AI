@@ -183,76 +183,155 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 import io
                 import base64
                 
-                # Generate PDF attachment if ReportLab is available
+                # Generate PDF attachment matching web design layout
                 pdf_b64 = None
-                filename = f"Invoice_{str(invoice.id)[:8]}.pdf"
+                filename = f"{'Bill' if is_bill else 'Invoice'}_{str(invoice.id)[:8]}.pdf"
                 try:
                     from reportlab.lib.pagesizes import letter
+                    from reportlab.lib import colors
                     from reportlab.pdfgen import canvas
                     
                     buffer = io.BytesIO()
                     p = canvas.Canvas(buffer, pagesize=letter)
+                    width, height = letter # 612 x 792
                     
-                    p.setFont("Helvetica-Bold", 18)
-                    p.drawString(50, 750, f"{business_name}")
+                    y = height - 50 # 742
                     
-                    p.setFont("Helvetica-Bold", 14)
-                    p.drawString(50, 725, f"INVOICE #{str(invoice.id)[:8]}")
+                    # Top Left: Business Info
+                    p.setFont("Helvetica-Bold", 16)
+                    p.setFillColor(colors.HexColor("#111827"))
+                    p.drawString(50, y, str(business_name))
                     
-                    p.setFont("Helvetica", 10)
-                    p.drawString(50, 705, f"Customer: {customer_name}")
-                    p.drawString(50, 690, f"Status: {invoice.status.upper()}")
-                    
-                    p.line(50, 675, 550, 675)
-                    
-                    y = 655
-                    p.setFont("Helvetica-Bold", 10)
-                    p.drawString(50, y, "Item Description")
-                    p.drawString(350, y, "Qty")
-                    p.drawString(450, y, "Price (₹)")
-                    y -= 15
-                    p.line(50, y, 550, y)
-                    y -= 20
-                    
-                    p.setFont("Helvetica", 10)
-                    for line in invoice.lines.all():
-                        p.drawString(50, y, str(line.description)[:40])
-                        p.drawString(350, y, str(line.quantity))
-                        p.drawString(450, y, f"{line.unit_price:.2f}")
-                        y -= 20
-                        if y < 100:
-                            p.showPage()
-                            y = 750
+                    if business_owner_name:
+                        y -= 18
+                        p.setFont("Helvetica", 10)
+                        p.setFillColor(colors.HexColor("#4b5563"))
+                        p.drawString(50, y, str(business_owner_name))
+                        
+                    if business_address:
+                        p.setFont("Helvetica", 9)
+                        p.setFillColor(colors.HexColor("#6b7280"))
+                        for addr_line in str(business_address).split('\n'):
+                            y -= 14
+                            p.drawString(50, y, addr_line.strip())
                             
-                    is_bill = getattr(invoice, 'document_type', 'invoice') == 'bill'
+                    # Top Right: BILL TO
+                    y_right = height - 50
+                    p.setFont("Helvetica-Bold", 9)
+                    p.setFillColor(colors.HexColor("#6b7280"))
+                    p.drawRightString(562, y_right, "BILL TO")
+                    
+                    y_right -= 18
+                    p.setFont("Helvetica-Bold", 14)
+                    p.setFillColor(colors.HexColor("#111827"))
+                    p.drawRightString(562, y_right, str(customer_name))
+                    
+                    # Move y down past header
+                    y = min(y - 35, y_right - 35)
+                    
+                    # Green Title: BILL or INVOICE
+                    doc_title_label = "BILL" if is_bill else "INVOICE"
+                    p.setFont("Helvetica-Bold", 22)
+                    p.setFillColor(colors.HexColor("#15803d")) # Emerald Green
+                    p.drawString(50, y, doc_title_label)
+                    
+                    # Meta info
+                    y -= 20
+                    p.setFont("Helvetica-Bold", 9)
+                    p.setFillColor(colors.HexColor("#374151"))
+                    p.drawString(50, y, f"{'Bill' if is_bill else 'Invoice'} #:")
+                    p.setFont("Helvetica", 9)
+                    p.drawString(95, y, str(invoice.id)[:8].upper())
+                    
+                    y -= 15
+                    p.setFont("Helvetica-Bold", 9)
+                    p.drawString(50, y, "Date:")
+                    p.setFont("Helvetica", 9)
+                    date_str = invoice.created_at.strftime('%d-%m-%Y') if hasattr(invoice, 'created_at') and invoice.created_at else ""
+                    p.drawString(95, y, date_str)
+                    
+                    y -= 15
+                    p.setFont("Helvetica-Bold", 9)
+                    p.drawString(50, y, "Status:")
+                    p.setFont("Helvetica-Bold", 9)
+                    p.setFillColor(colors.HexColor("#15803d") if invoice.status.lower() == 'paid' else colors.HexColor("#ef4444"))
+                    p.drawString(95, y, invoice.status.upper())
+                    
+                    # Divider line
+                    y -= 25
+                    p.setStrokeColor(colors.HexColor("#e5e7eb"))
+                    p.setLineWidth(1)
+                    p.line(50, y, 562, y)
+                    
+                    # Table Header
+                    y -= 25
+                    p.setFont("Helvetica-Bold", 10)
+                    p.setFillColor(colors.HexColor("#374151"))
+                    p.drawString(50, y, "Item Description")
+                    p.drawCentredString(320, y, "Qty")
+                    p.drawRightString(440, y, "Unit Price")
+                    p.drawRightString(562, y, "Total")
+                    
+                    # Items
+                    for line in invoice.lines.all():
+                        y -= 20
+                        p.setFont("Helvetica", 10)
+                        p.setFillColor(colors.HexColor("#1f2937"))
+                        p.drawString(50, y, str(line.description)[:40])
+                        p.drawCentredString(320, y, str(line.quantity))
+                        p.drawRightString(440, y, f"₹{line.unit_price:.2f}")
+                        line_total = line.quantity * line.unit_price
+                        p.drawRightString(562, y, f"₹{line_total:.2f}")
+                        
+                        # Subtle row border
+                        p.setStrokeColor(colors.HexColor("#f3f4f6"))
+                        p.setLineWidth(0.5)
+                        p.line(50, y - 6, 562, y - 6)
+                        
+                        if y < 120:
+                            p.showPage()
+                            y = height - 50
+                            
                     paid_amount = sum(float(p.amount) for p in invoice.payments.all()) if hasattr(invoice, 'payments') and invoice.payments.exists() else (float(invoice.total) if invoice.status == 'paid' else 0.0)
                     balance_due = max(0.0, float(invoice.total) - paid_amount)
                     
-                    p.line(50, y, 550, y)
-                    y -= 25
-                    p.setFont("Helvetica", 10)
-                    p.drawString(300, y, "Subtotal:")
-                    p.drawString(450, y, f"₹{invoice.total:.2f}")
-                    y -= 18
+                    # Totals Section (Right Aligned)
+                    y -= 30
+                    p.setStrokeColor(colors.HexColor("#e5e7eb"))
+                    p.setLineWidth(1)
+                    p.line(300, y + 10, 562, y + 10)
                     
-                    p.setFont("Helvetica-Bold", 13)
+                    p.setFont("Helvetica", 10)
+                    p.setFillColor(colors.HexColor("#6b7280"))
+                    p.drawString(300, y, "Subtotal:")
+                    p.setFillColor(colors.HexColor("#111827"))
+                    p.drawRightString(562, y, f"₹{invoice.total:.2f}")
+                    
+                    y -= 25
+                    p.setFont("Helvetica-Bold", 14)
+                    p.setFillColor(colors.HexColor("#15803d"))
                     p.drawString(300, y, "Total Amount:")
-                    p.drawString(450, y, f"₹{invoice.total:.2f}")
-                    y -= 20
+                    p.drawRightString(562, y, f"₹{invoice.total:.2f}")
                     
                     if not is_bill:
+                        y -= 20
                         p.setFont("Helvetica", 10)
+                        p.setFillColor(colors.HexColor("#6b7280"))
                         p.drawString(300, y, "Amount Paid:")
-                        p.drawString(450, y, f"₹{paid_amount:.2f}")
-                        y -= 18
+                        p.setFillColor(colors.HexColor("#16a34a"))
+                        p.drawRightString(562, y, f"₹{paid_amount:.2f}")
                         
+                        y -= 18
                         p.setFont("Helvetica-Bold", 10)
+                        p.setFillColor(colors.HexColor("#374151"))
                         p.drawString(300, y, "Balance Due:")
-                        p.drawString(450, y, f"₹{balance_due:.2f}")
-                    
+                        p.setFillColor(colors.HexColor("#ef4444") if balance_due > 0 else colors.HexColor("#6b7280"))
+                        p.drawRightString(562, y, f"₹{balance_due:.2f}")
+                        
                     # Footer
-                    p.setFont("Helvetica-Oblique", 10)
-                    p.drawCentredString(300, 50, "Thank you for your business!")
+                    p.setFont("Helvetica", 10)
+                    p.setFillColor(colors.HexColor("#6b7280"))
+                    p.drawCentredString(width / 2.0, 50, "Thank you for your business!")
                     
                     p.showPage()
                     p.save()
