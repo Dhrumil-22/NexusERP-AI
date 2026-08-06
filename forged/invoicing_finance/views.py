@@ -89,20 +89,80 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 import os
                 import json
                 import urllib.request
+                import io
+                import base64
+                
+                # Generate PDF attachment if ReportLab is available
+                pdf_b64 = None
+                filename = f"Invoice_{str(invoice.id)[:8]}.pdf"
+                try:
+                    from reportlab.lib.pagesizes import letter
+                    from reportlab.pdfgen import canvas
+                    
+                    buffer = io.BytesIO()
+                    p = canvas.Canvas(buffer, pagesize=letter)
+                    
+                    p.setFont("Helvetica-Bold", 18)
+                    p.drawString(50, 750, f"{business_name}")
+                    
+                    p.setFont("Helvetica-Bold", 14)
+                    p.drawString(50, 725, f"INVOICE #{str(invoice.id)[:8]}")
+                    
+                    p.setFont("Helvetica", 10)
+                    p.drawString(50, 705, f"Customer: {customer_name}")
+                    p.drawString(50, 690, f"Status: {invoice.status.upper()}")
+                    
+                    p.line(50, 675, 550, 675)
+                    
+                    y = 655
+                    p.setFont("Helvetica-Bold", 10)
+                    p.drawString(50, y, "Item Description")
+                    p.drawString(350, y, "Qty")
+                    p.drawString(450, y, "Price (₹)")
+                    y -= 15
+                    p.line(50, y, 550, y)
+                    y -= 20
+                    
+                    p.setFont("Helvetica", 10)
+                    for line in invoice.lines.all():
+                        p.drawString(50, y, str(line.description)[:40])
+                        p.drawString(350, y, str(line.quantity))
+                        p.drawString(450, y, f"{line.unit_price:.2f}")
+                        y -= 20
+                        if y < 100:
+                            p.showPage()
+                            y = 750
+                            
+                    p.line(50, y, 550, y)
+                    y -= 25
+                    p.setFont("Helvetica-Bold", 12)
+                    p.drawString(350, y, f"Total: ₹{invoice.total:.2f}")
+                    
+                    p.showPage()
+                    p.save()
+                    
+                    buffer.seek(0)
+                    pdf_b64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+                except Exception as pdf_err:
+                    print(f"PDF generation warning: {pdf_err}")
                 
                 BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '').strip()
                 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '').strip()
                 
                 if BREVO_API_KEY:
                     # Brevo API (Supports sending to ANY recipient with just Gmail Single Sender verification)
+                    brevo_payload = {
+                        "sender": {"name": business_name, "email": sender_email or "dhrumilvaghela22@gmail.com"},
+                        "to": [{"email": target_email}],
+                        "subject": subject,
+                        "htmlContent": html_content
+                    }
+                    if pdf_b64:
+                        brevo_payload["attachment"] = [{"name": filename, "content": pdf_b64}]
+                        
                     req = urllib.request.Request(
                         'https://api.brevo.com/v3/smtp/email',
-                        data=json.dumps({
-                            "sender": {"name": business_name, "email": sender_email or "dhrumilvaghela22@gmail.com"},
-                            "to": [{"email": target_email}],
-                            "subject": subject,
-                            "htmlContent": html_content
-                        }).encode('utf-8'),
+                        data=json.dumps(brevo_payload).encode('utf-8'),
                         headers={
                             'api-key': BREVO_API_KEY,
                             'Content-Type': 'application/json',
@@ -120,14 +180,18 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                         return Response({'error': f'Brevo API Error: {str(api_err)}'}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     # Fallback to Resend API
+                    resend_payload = {
+                        "from": f"{business_name} <onboarding@resend.dev>",
+                        "to": [target_email],
+                        "subject": subject,
+                        "html": html_content
+                    }
+                    if pdf_b64:
+                        resend_payload["attachments"] = [{"filename": filename, "content": pdf_b64}]
+                        
                     req = urllib.request.Request(
                         'https://api.resend.com/emails',
-                        data=json.dumps({
-                            "from": f"{business_name} <onboarding@resend.dev>",
-                            "to": [target_email],
-                            "subject": subject,
-                            "html": html_content
-                        }).encode('utf-8'),
+                        data=json.dumps(resend_payload).encode('utf-8'),
                         headers={
                             'Authorization': f'Bearer {RESEND_API_KEY}',
                             'Content-Type': 'application/json',
