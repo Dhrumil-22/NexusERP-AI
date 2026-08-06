@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Loader2, CheckCircle, UploadCloud, Sun, Moon } from "lucide-react";
+import { Loader2, CheckCircle, UploadCloud, Sun, Moon, ShieldCheck } from "lucide-react";
 
 import { API_BASE } from "../../config";
 
@@ -401,8 +401,9 @@ export function VariantTopIllustration({
             ) : (
               <div className="space-y-6 max-w-md mx-auto animate-fade-in">
                 <div className="text-center bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-2xl">
-                  <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-                    🔒 Security Verification Code Sent
+                  <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    Security Verification Code Sent
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
                     Please check <strong className="font-bold text-foreground">{maskedEmail}</strong> for your 6-digit OTP code.
