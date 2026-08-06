@@ -29,39 +29,144 @@ class RegisterBusinessView(APIView):
             return Response({'message': 'Business and Admin user created successfully.'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+import time
+import random
+import os
+import json
+import urllib.request
+
+OTP_STORAGE = {}
+
+def send_otp_email(target_email, otp_code, username):
+    BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '').strip()
+    RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '').strip()
+    
+    subject = f"Your Login Security OTP: {otp_code} - Nexus ERP"
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset="utf-8"></head>
+    <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f9fafb; margin: 0; padding: 20px;">
+      <div style="max-width: 480px; margin: 0 auto; background: #ffffff; border-radius: 16px; padding: 32px; border: 1px solid #e5e7eb; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+        <h2 style="color: #15803d; margin-top: 0; font-size: 20px;">Nexus ERP Security</h2>
+        <p style="color: #4b5563; font-size: 15px;">Hello <strong>{username}</strong>,</p>
+        <p style="color: #4b5563; font-size: 15px; line-height: 1.5;">Use the following One-Time Password (OTP) to complete your login into Nexus ERP. This code is valid for 5 minutes:</p>
+        <div style="background: #f0fdf4; border: 1px dashed #16a34a; border-radius: 12px; padding: 20px; text-align: center; margin: 24px 0;">
+          <span style="font-size: 34px; font-weight: 800; letter-spacing: 8px; color: #15803d;">{otp_code}</span>
+        </div>
+        <p style="color: #9ca3af; font-size: 12px; margin-bottom: 0;">If you did not request this login code, please secure your account immediately.</p>
+      </div>
+    </body>
+    </html>
+    """
+    
+    if BREVO_API_KEY:
+        req = urllib.request.Request(
+            'https://api.brevo.com/v3/smtp/email',
+            data=json.dumps({
+                "sender": {"name": "Nexus ERP Security", "email": "dhrumilvaghela22@gmail.com"},
+                "to": [{"email": target_email}],
+                "subject": subject,
+                "htmlContent": html_content
+            }).encode('utf-8'),
+            headers={'api-key': BREVO_API_KEY, 'Content-Type': 'application/json', 'Accept': 'application/json'},
+            method='POST'
+        )
+        try:
+            with urllib.request.urlopen(req) as resp:
+                resp.read()
+        except Exception as e:
+            print(f"Failed to send Brevo OTP email: {e}")
+    elif RESEND_API_KEY:
+        req = urllib.request.Request(
+            'https://api.resend.com/emails',
+            data=json.dumps({
+                "from": "Nexus ERP Security <onboarding@resend.dev>",
+                "to": [target_email],
+                "subject": subject,
+                "html": html_content
+            }).encode('utf-8'),
+            headers={'Authorization': f'Bearer {RESEND_API_KEY}', 'Content-Type': 'application/json', 'User-Agent': 'NexusERP/1.0'},
+            method='POST'
+        )
+        try:
+            with urllib.request.urlopen(req) as resp:
+                resp.read()
+        except Exception as e:
+            print(f"Failed to send Resend OTP email: {e}")
+    else:
+        print(f"[DEV] OTP for {username} is: {otp_code}")
+
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
+        otp_input = request.data.get('otp')
+        
         user = authenticate(username=username, password=password)
-        if user is not None:
-            refresh = RefreshToken.for_user(user)
+        if user is None:
+            return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
             
-            # Record Session
-            ip = request.META.get('REMOTE_ADDR', '')
-            device = request.META.get('HTTP_USER_AGENT', '')
-            Session.objects.create(
-                business=user.business,
-                user=user,
-                ip_address=ip,
-                device_info=device[:255]
-            )
+        target_email = getattr(user, 'email', None) or "dhrumilvaghela22@gmail.com"
+        
+        # Step 1: No OTP provided -> Generate and send OTP
+        if not otp_input:
+            otp_code = f"{random.randint(100000, 999999)}"
+            OTP_STORAGE[user.username] = {
+                'otp': otp_code,
+                'expires_at': time.time() + 300
+            }
             
-            # Fire signal
-            from core.events import user_logged_in
-            user_logged_in.send(
-                sender=self.__class__,
-                tenant_id=user.business_id if user.business else None,
-                user_id=user.id
-            )
-
+            send_otp_email(target_email, otp_code, user.username)
+            
+            # Mask email for UI
+            parts = target_email.split('@')
+            masked = (parts[0][0] + "***@" + parts[1]) if len(parts) == 2 and len(parts[0]) > 1 else target_email
+            
             return Response({
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
+                'otp_required': True,
+                'email_masked': masked,
+                'message': f'OTP sent to {masked}'
             })
-        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+            
+        # Step 2: OTP provided -> Verify OTP
+        otp_data = OTP_STORAGE.get(user.username)
+        if not otp_data or time.time() > otp_data.get('expires_at', 0):
+            return Response({'error': 'OTP has expired or is invalid. Please request a new code.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        if str(otp_data.get('otp')).strip() != str(otp_input).strip():
+            return Response({'error': 'Incorrect OTP code. Please check your email and try again.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        # Clear used OTP
+        if user.username in OTP_STORAGE:
+            del OTP_STORAGE[user.username]
+            
+        refresh = RefreshToken.for_user(user)
+        
+        # Record Session
+        ip = request.META.get('REMOTE_ADDR', '')
+        device = request.META.get('HTTP_USER_AGENT', '')
+        Session.objects.create(
+            business=user.business,
+            user=user,
+            ip_address=ip,
+            device_info=device[:255]
+        )
+        
+        # Fire signal
+        from core.events import user_logged_in
+        user_logged_in.send(
+            sender=self.__class__,
+            tenant_id=user.business_id if user.business else None,
+            user_id=user.id
+        )
+
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        })
 
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
