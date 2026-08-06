@@ -68,9 +68,9 @@ router.post('/growth-consultant', async (req, res) => {
       return res.status(400).json({ error: 'message is required' });
     }
 
-    const registeredModules = await ModuleManifest.find({}, 'module_id name description');
+    const registeredModules = await ModuleManifest.find({}, 'module_id');
     const availableModulesStr = registeredModules
-      .map(m => `${m.module_id}: ${m.name}`)
+      .map(m => m.module_id)
       .join(', ');
 
     const prompt = `You are a NexusERP Growth Consultant AI.
