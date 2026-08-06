@@ -61,7 +61,11 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 target_email = customer.email
                 
             if target_email:
-                business_name = request.user.business.name if getattr(request.user, 'business', None) else "Nexus ERP"
+                business = getattr(request.user, 'business', None)
+                business_name = business.name if (business and getattr(business, 'name', None)) else "Nexus ERP"
+                business_owner_name = business.owner_name if (business and getattr(business, 'owner_name', None)) else ""
+                business_address = business.address if (business and getattr(business, 'address', None)) else ""
+                
                 custom_from = request.data.get('from_email')
                 sender_email = custom_from or request.user.email or settings.DEFAULT_FROM_EMAIL
                 subject = f"Invoice {invoice.id} from {business_name}"
@@ -180,6 +184,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 import os
                 import json
                 import urllib.request
+                import urllib.error
                 import io
                 import base64
                 
