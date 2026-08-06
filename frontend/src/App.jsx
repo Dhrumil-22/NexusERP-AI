@@ -47,6 +47,7 @@ function Layout() {
     useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Default to false on mobile, will be controlled properly
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [uiDebug, setUiDebug] = useState(false);
   
   React.useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -96,7 +97,7 @@ function Layout() {
   const showSidebar = isMobile || !isEmployee || functionalManifests.length > 3;
 
   return (
-    <div className="flex flex-col h-screen relative overflow-hidden bg-background">
+    <div className={`flex flex-col h-screen relative overflow-hidden bg-background ${uiDebug ? "debug-ui" : ""}`}>
       {/* Background Ambient Mesh Gradients */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <div
@@ -169,12 +170,23 @@ function Layout() {
       )}
 
       {/* Screen Size Debugger */}
-      <div className="fixed bottom-2 left-2 z-[100] bg-black/80 text-white px-2 py-1 rounded text-xs font-mono font-bold">
-        <span className="sm:hidden">XS (Mobile)</span>
-        <span className="hidden sm:inline md:hidden">SM (Tablet)</span>
-        <span className="hidden md:inline lg:hidden">MD (Laptop)</span>
-        <span className="hidden lg:inline xl:hidden">LG (Desktop)</span>
-        <span className="hidden xl:inline">XL (Wide)</span>
+      <div className="fixed bottom-2 left-2 z-[100] flex items-center gap-2">
+        <div className="bg-black/80 text-white px-2 py-1 rounded text-xs font-mono font-bold">
+          <span className="sm:hidden">XS (Mobile)</span>
+          <span className="hidden sm:inline md:hidden">SM (Tablet)</span>
+          <span className="hidden md:inline lg:hidden">MD (Laptop)</span>
+          <span className="hidden lg:inline xl:hidden">LG (Desktop)</span>
+          <span className="hidden xl:inline">XL (Wide)</span>
+        </div>
+        <button
+          onClick={() => setUiDebug(!uiDebug)}
+          className={`px-2 py-1 rounded text-xs font-mono font-bold transition-colors ${
+            uiDebug ? "bg-red-500 text-white" : "bg-black/80 text-white/50 hover:text-white"
+          }`}
+          title="Toggle Layout Debugger"
+        >
+          {uiDebug ? "DEBUG: ON" : "DEBUG: OFF"}
+        </button>
       </div>
     </div>
   );
