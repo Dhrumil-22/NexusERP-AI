@@ -62,7 +62,7 @@ export function CustomerCareDashboard() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 animate-fade-in relative z-10 p-4 md:p-8">
+    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-4 md:p-8 xl:p-12">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -77,14 +77,14 @@ export function CustomerCareDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12">
         
         {/* Left Column: Create Request */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="lg:col-span-4 space-y-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass-panel rounded-2xl p-6 relative overflow-hidden group border border-border/50 hover:border-primary/30 transition-all duration-300"
+            className="glass-panel rounded-3xl p-8 relative overflow-hidden group border border-border/50 hover:border-primary/30 transition-all duration-300"
           >
             <div className="absolute top-0 left-0 w-full h-1" style={{ backgroundColor: themeColor }} />
             
@@ -101,11 +101,11 @@ export function CustomerCareDashboard() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="e.g. I am opening two new cafe branches and need a better way to track daily attendance and multi-location inventory..."
-                  className="w-full p-4 pb-12 border border-border/50 bg-background/50 text-foreground rounded-xl focus:ring-2 focus:border-transparent outline-none resize-none min-h-[160px] placeholder:text-muted-foreground/50 transition-all shadow-inner custom-scrollbar text-sm"
+                  className="w-full p-5 pb-14 border border-border/50 bg-background/50 text-foreground rounded-2xl focus:ring-2 focus:border-transparent outline-none resize-none min-h-[220px] placeholder:text-muted-foreground/50 transition-all shadow-inner custom-scrollbar text-base leading-relaxed"
                   style={{ '--tw-ring-color': themeColor }}
                 />
                 
-                <div className="absolute bottom-3 right-3">
+                <div className="absolute bottom-4 right-4">
                   <button
                     type="submit"
                     disabled={isSubmitting || !message.trim()}
@@ -128,12 +128,12 @@ export function CustomerCareDashboard() {
             </form>
           </motion.div>
 
-          <div className="glass-panel rounded-2xl p-6 border border-border/50 bg-primary/5">
-            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-primary" style={{ color: themeColor }} />
+          <div className="glass-panel rounded-3xl p-8 border border-border/50 bg-primary/5">
+            <h3 className="text-base font-bold text-foreground mb-4 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-primary" style={{ color: themeColor }} />
               Tips for better AI advice
             </h3>
-            <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
+            <ul className="text-sm text-muted-foreground space-y-3 list-disc list-inside leading-relaxed">
               <li>Mention your specific industry</li>
               <li>Describe the bottleneck you're facing</li>
               <li>Include your current scale (e.g. staff count, branches)</li>
@@ -142,10 +142,10 @@ export function CustomerCareDashboard() {
         </div>
 
         {/* Right Column: Past Requests */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="flex items-center gap-3 mb-2">
-            <History className="w-5 h-5 text-muted-foreground" />
-            <h2 className="text-xl font-bold text-foreground">Consultation History</h2>
+        <div className="lg:col-span-8 space-y-8">
+          <div className="flex items-center gap-3 mb-4">
+            <History className="w-6 h-6 text-muted-foreground" />
+            <h2 className="text-2xl font-bold text-foreground">Consultation History</h2>
           </div>
 
           <div className="space-y-4">
@@ -154,11 +154,11 @@ export function CustomerCareDashboard() {
                 <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="glass-panel rounded-2xl p-12 text-center border border-dashed border-border/50"
+                  className="glass-panel rounded-3xl p-16 text-center border border-dashed border-border/50"
                 >
-                  <Bot className="w-12 h-12 mx-auto text-muted-foreground/30 mb-4" />
-                  <h3 className="text-lg font-bold text-foreground">No consultations yet</h3>
-                  <p className="text-muted-foreground mt-1">Submit your first request on the left to get AI-driven growth strategies.</p>
+                  <Bot className="w-16 h-16 mx-auto text-muted-foreground/30 mb-6" />
+                  <h3 className="text-xl font-bold text-foreground">No consultations yet</h3>
+                  <p className="text-muted-foreground mt-2 text-lg">Submit your first request on the left to get AI-driven growth strategies.</p>
                 </motion.div>
               )}
 
@@ -168,20 +168,20 @@ export function CustomerCareDashboard() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.1 }}
-                  className="glass-panel rounded-2xl border border-border/50 overflow-hidden hover:border-primary/20 transition-all duration-300"
+                  className="glass-panel rounded-3xl border border-border/50 overflow-hidden hover:border-primary/20 transition-all duration-300 shadow-sm"
                 >
                   {/* User Request Bubble */}
-                  <div className="p-5 bg-background/30 border-b border-border/30">
-                    <div className="flex items-start gap-4">
+                  <div className="p-6 md:p-8 bg-background/30 border-b border-border/30">
+                    <div className="flex items-start gap-5">
                       <div className="shrink-0 mt-1">
-                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
+                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-bold text-muted-foreground">
                           You
                         </div>
                       </div>
                       <div className="flex-1">
-                        <p className="text-foreground text-sm leading-relaxed">{ticket.message}</p>
-                        <div className="flex items-center gap-2 mt-3 text-xs text-muted-foreground">
-                          <Clock className="w-3.5 h-3.5" />
+                        <p className="text-foreground text-base leading-relaxed">{ticket.message}</p>
+                        <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
+                          <Clock className="w-4 h-4" />
                           {new Date(ticket.created_at).toLocaleString(undefined, {
                             month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
                           })}
@@ -192,29 +192,29 @@ export function CustomerCareDashboard() {
 
                   {/* AI Response Bubble */}
                   {ticket.ai_response && (
-                    <div className="p-5 bg-primary/5 relative">
-                      <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: themeColor }} />
-                      <div className="flex items-start gap-4 pl-2">
+                    <div className="p-6 md:p-8 bg-primary/5 relative">
+                      <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: themeColor }} />
+                      <div className="flex items-start gap-5 pl-2">
                         <div className="shrink-0 mt-1">
-                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-white shadow-md" style={{ backgroundColor: themeColor }}>
-                            <Bot className="w-4 h-4" />
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md" style={{ backgroundColor: themeColor }}>
+                            <Bot className="w-5 h-5" />
                           </div>
                         </div>
                         <div className="flex-1">
-                          <h4 className="text-sm font-bold flex items-center gap-2 mb-2" style={{ color: themeColor }}>
+                          <h4 className="text-base font-bold flex items-center gap-2 mb-3" style={{ color: themeColor }}>
                             Nexus AI Analyst
                           </h4>
-                          <p className="text-foreground/90 text-sm leading-relaxed whitespace-pre-wrap">
+                          <p className="text-foreground/90 text-base leading-relaxed whitespace-pre-wrap">
                             {ticket.ai_response}
                           </p>
                           
-                          <div className="mt-5 flex justify-end">
+                          <div className="mt-6 flex justify-end">
                             <button 
-                              className="px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition-all hover:scale-105 active:scale-95 text-white shadow-sm"
+                              className="px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all hover:scale-105 active:scale-95 text-white shadow-sm"
                               style={{ backgroundColor: themeColor }}
                             >
                               Browse Recommended Modules
-                              <ArrowRight className="w-3.5 h-3.5" />
+                              <ArrowRight className="w-4 h-4" />
                             </button>
                           </div>
                         </div>
@@ -224,14 +224,14 @@ export function CustomerCareDashboard() {
 
                   {/* Pending State */}
                   {!ticket.ai_response && (
-                    <div className="p-5 bg-muted/20 flex items-center gap-3">
+                    <div className="p-6 md:p-8 bg-muted/20 flex items-center gap-4">
                       <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
                       >
-                        <Sparkles className="w-4 h-4 text-muted-foreground" />
+                        <Sparkles className="w-5 h-5 text-muted-foreground" />
                       </motion.div>
-                      <p className="text-sm text-muted-foreground italic">AI is analyzing your request...</p>
+                      <p className="text-base text-muted-foreground italic">AI is analyzing your request...</p>
                     </div>
                   )}
                 </motion.div>
