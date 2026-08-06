@@ -22,7 +22,9 @@ class SupportTicketViewSet(viewsets.ModelViewSet):
         
         # Call Express AI service to generate a growth recommendation
         try:
-            express_url = f"{settings.EXPRESS_SERVICE_URL}/api/ai/growth-consultant"
+            import os
+            express_base = getattr(settings, 'EXPRESS_SERVICE_URL', os.environ.get('EXPRESS_SERVICE_URL', 'http://127.0.0.1:5000'))
+            express_url = f"{express_base}/api/ai/growth-consultant"
             payload = {
                 "message": ticket.message,
                 "enabled_modules": self.request.user.business.enabled_modules
