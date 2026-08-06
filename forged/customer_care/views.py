@@ -3,7 +3,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import SupportTicket
 from .serializers import SupportTicketSerializer
-import requests
 from django.conf import settings
 import logging
 
@@ -32,6 +31,7 @@ class SupportTicketViewSet(viewsets.ModelViewSet):
         # Call Express AI service to generate a growth recommendation
         try:
             import os
+            import requests
             express_base = getattr(settings, 'EXPRESS_SERVICE_URL', os.environ.get('EXPRESS_SERVICE_URL', 'http://127.0.0.1:5000'))
             express_url = f"{express_base}/api/ai/growth-consultant"
             payload = {
