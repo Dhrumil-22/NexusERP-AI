@@ -106,26 +106,33 @@ export function InvoicingFinanceDashboard() {
       invoice.payments?.reduce((acc, p) => acc + parseFloat(p.amount), 0) || 0;
     return Math.max(0, total - paid);
   };
-  const handleSendEmail = async () => {
+  const handleSendEmail = () => {
     if (!selectedInvoice) return;
-    setIsEmailing(true);
-    try {
-      await axios.post(
-        `${API_BASE}/api/billing/invoices/${selectedInvoice.id}/send_email/`,
-        { email: emailInput, from_email: fromEmailInput },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      setShowEmailModal(false);
-      setStatusMessage({ title: "Success", message: "Email sent successfully!", type: "success" });
-    } catch (err) {
-      console.error(err);
-      const backendError = err.response?.data?.error || err.message || "Failed to send email. Check if customer has an email address.";
-      setStatusMessage({ title: "Error", message: backendError, type: "error" });
-    } finally {
-      setIsEmailing(false);
+    
+    if (!emailInput) {
+      setStatusMessage({ title: "Error", message: "Please enter an email address", type: "error" });
+      return;
     }
+
+    const subject = `Invoice ${selectedInvoice.id}`;
+    let body = `Hello,\n\nHere is your invoice/receipt for your recent visit.\n\n`;
+    
+    if (selectedInvoice.lines && selectedInvoice.lines.length > 0) {
+      selectedInvoice.lines.forEach(line => {
+        body += `- ${line.quantity}x ${line.description} @ ₹${line.unit_price} each\n`;
+      });
+    }
+    
+    body += `\nSubtotal: ₹${selectedInvoice.subtotal}\n`;
+    body += `Total: ₹${selectedInvoice.total}\n`;
+    body += `Status: ${selectedInvoice.status.toUpperCase()}\n`;
+    body += `\nThank you for your business!`;
+
+    const mailtoLink = `mailto:${emailInput}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+
+    setShowEmailModal(false);
+    setStatusMessage({ title: "Success", message: "Opened your email app to send the invoice!", type: "success" });
   };
 
   const generatePDF = () => {
