@@ -8,7 +8,8 @@ import {
   History, 
   Clock,
   ArrowRight,
-  Bot
+  Bot,
+  Headset
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE } from "../config";
@@ -62,12 +63,13 @@ export function CustomerCareDashboard() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 animate-fade-in relative z-10 p-4 md:p-6">
+    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in relative z-10 p-4 md:p-8">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-3">
+            <Headset className="w-8 h-8" style={{ color: themeColor }} />
             Customer Care
           </h1>
           <p className="text-muted-foreground mt-1 text-sm md:text-base">
