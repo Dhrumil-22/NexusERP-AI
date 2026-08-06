@@ -152,7 +152,7 @@ export function BillingDashboard() {
                           : "Walk-in Customer"}
                       </td>
                       <td className="px-4 py-4 text-muted-foreground">
-                        {new Date(inv.created_at).toLocaleDateString()}
+                        {new Date(inv.created_at).toLocaleDateString('en-GB').replace(/\//g, '-')}
                       </td>
                       <td className="px-4 py-4 text-right font-bold">
                         ₹{parseFloat(inv.total).toFixed(2)}

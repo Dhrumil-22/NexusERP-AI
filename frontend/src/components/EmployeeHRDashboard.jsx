@@ -344,7 +344,7 @@ export function EmployeeHRDashboard() {
                     {emp.role_name || "No Role"}
                   </div>
                   <span className="text-muted-foreground">
-                    Hired: {new Date(emp.hire_date).toLocaleDateString()}
+                    Hired: {new Date(emp.hire_date).toLocaleDateString('en-GB').replace(/\//g, '-')}
                   </span>
                 </div>
               </div>

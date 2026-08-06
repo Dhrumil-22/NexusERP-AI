@@ -424,7 +424,7 @@ function NotesModal({ customer, onClose, onSuccess }) {
               >
                 <p className="text-sm whitespace-pre-wrap">{n.note}</p>
                 <div className="text-xs text-muted-foreground mt-2 text-right">
-                  {new Date(n.created_at).toLocaleString()}
+                  {new Date(n.created_at).toLocaleString('en-GB').replace(/\//g, '-')}
                 </div>
               </div>
             ))

@@ -118,7 +118,7 @@ export function NotificationsDashboard() {
                       {n.title}
                     </h4>
                     <span className="text-xs text-muted-foreground whitespace-nowrap">
-                      {new Date(n.created_at).toLocaleString()}
+                      {new Date(n.created_at).toLocaleString('en-GB').replace(/\//g, '-')}
                     </span>
                   </div>
                   <p

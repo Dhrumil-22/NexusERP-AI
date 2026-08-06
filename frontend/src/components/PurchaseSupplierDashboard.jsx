@@ -211,7 +211,7 @@ export function PurchaseSupplierDashboard() {
                     PO to {po.supplier_name}
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Created: {new Date(po.created_at).toLocaleDateString()}
+                    Created: {new Date(po.created_at).toLocaleDateString('en-GB').replace(/\//g, '-')}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">

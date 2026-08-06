@@ -187,9 +187,7 @@ export function CustomerCareDashboard() {
                         <p className="text-foreground text-sm leading-relaxed">{ticket.message}</p>
                         <div className="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground">
                           <Clock className="w-3.5 h-3.5" />
-                          {new Date(ticket.created_at).toLocaleString(undefined, {
-                            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                          })}
+                          {new Date(ticket.created_at).toLocaleString('en-GB').replace(/\//g, '-')}
                         </div>
                       </div>
                     </div>

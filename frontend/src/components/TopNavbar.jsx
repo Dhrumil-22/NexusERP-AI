@@ -254,7 +254,7 @@ export function TopNavbar({
                               {notif.message}
                             </div>
                             <div className="text-[10px] text-muted-foreground/70 mt-2 font-mono">
-                              {new Date(notif.created_at).toLocaleString()}
+                              {new Date(notif.created_at).toLocaleString('en-GB').replace(/\//g, '-')}
                             </div>
                           </div>
                           {!notif.is_read && (

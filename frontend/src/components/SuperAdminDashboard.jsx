@@ -306,7 +306,7 @@ function BusinessTicketsList({ businessId, token }) {
       {tickets.map(t => (
         <div key={t.id} className="p-4 bg-secondary/10 rounded-xl border border-border/30">
           <div className="text-xs text-muted-foreground mb-2 flex items-center justify-between">
-             <span><span className="font-bold">{t.user}</span> • {new Date(t.created_at).toLocaleString()}</span>
+             <span><span className="font-bold">{t.user}</span> • {new Date(t.created_at).toLocaleString('en-GB').replace(/\//g, '-')}</span>
              {t.status === 'open' ? (
                 <span className="px-2 py-0.5 rounded-full bg-red-500/10 text-red-500 font-bold border border-red-500/20">Open</span>
              ) : (

@@ -154,7 +154,7 @@ export function PurchaseOrdersDashboard() {
                             {po.id.split("-")[0]}...
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            {new Date(po.created_at).toLocaleDateString()}
+                            {new Date(po.created_at).toLocaleDateString('en-GB').replace(/\//g, '-')}
                           </div>
                         </td>
                         <td className="px-4 py-4 font-medium">

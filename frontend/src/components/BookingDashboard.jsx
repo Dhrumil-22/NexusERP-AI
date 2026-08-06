@@ -108,9 +108,7 @@ export function BookingDashboard() {
                     <div className="flex items-start gap-4">
                       <div className="bg-background rounded-lg p-3 shadow-sm text-center border border-border/50 min-w-[70px]">
                         <div className="text-xs font-bold text-muted-foreground uppercase">
-                          {new Date(apt.date).toLocaleString("default", {
-                            month: "short",
-                          })}
+                          {new Date(apt.date).toLocaleString('en-GB').replace(/\//g, '-')}
                         </div>
                         <div
                           className="text-xl font-black"
