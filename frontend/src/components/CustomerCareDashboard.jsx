@@ -40,6 +40,11 @@ export function CustomerCareDashboard() {
       fetchTickets();
     } catch (err) {
       console.error("Error creating ticket", err);
+      if (err.response && err.response.data && err.response.data.error) {
+          alert("Backend Error: " + err.response.data.error);
+      } else {
+          alert("Failed to submit ticket. " + err.message);
+      }
     } finally {
       setIsSubmitting(false);
     }

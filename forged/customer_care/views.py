@@ -14,6 +14,15 @@ class SupportTicketViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return SupportTicket.objects.filter(tenant_id=self.request.user.tenant_id).order_by('-created_at')
 
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except Exception as e:
+            import traceback
+            error_msg = f"Crash in create: {str(e)}\n{traceback.format_exc()}"
+            logging.error(error_msg)
+            return Response({"error": error_msg}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     def perform_create(self, serializer):
         ticket = serializer.save(
             tenant=self.request.user.business,
