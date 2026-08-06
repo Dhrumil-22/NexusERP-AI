@@ -90,7 +90,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 import json
                 import urllib.request
                 
-                RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+                RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '').strip()
                 
                 req = urllib.request.Request(
                     'https://api.resend.com/emails',
