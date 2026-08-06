@@ -121,7 +121,7 @@ function Layout() {
         showSidebar={showSidebar}
       />
 
-      <div className="flex flex-1 overflow-hidden relative z-10">
+      <div className="flex flex-1 overflow-hidden relative z-auto">
         {showSidebar && (
           <SidebarEngine manifests={visibleManifests} isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
         )}
