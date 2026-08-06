@@ -90,31 +90,59 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 import json
                 import urllib.request
                 
+                BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '').strip()
                 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '').strip()
                 
-                req = urllib.request.Request(
-                    'https://api.resend.com/emails',
-                    data=json.dumps({
-                        "from": f"{business_name} <onboarding@resend.dev>",
-                        "to": [target_email],
-                        "subject": subject,
-                        "html": html_content
-                    }).encode('utf-8'),
-                    headers={
-                        'Authorization': f'Bearer {RESEND_API_KEY}',
-                        'Content-Type': 'application/json',
-                        'User-Agent': 'NexusERP/1.0 (Integration)'
-                    },
-                    method='POST'
-                )
-                try:
-                    with urllib.request.urlopen(req) as response:
-                        res_data = response.read()
-                except urllib.error.HTTPError as api_err:
-                    error_body = api_err.read().decode()
-                    return Response({'error': f'Resend API Error: {error_body}'}, status=status.HTTP_400_BAD_REQUEST)
-                except Exception as api_err:
-                    return Response({'error': f'Resend API Error: {str(api_err)}'}, status=status.HTTP_400_BAD_REQUEST)
+                if BREVO_API_KEY:
+                    # Brevo API (Supports sending to ANY recipient with just Gmail Single Sender verification)
+                    req = urllib.request.Request(
+                        'https://api.brevo.com/v3/smtp/email',
+                        data=json.dumps({
+                            "sender": {"name": business_name, "email": sender_email or "dhrumilvaghela22@gmail.com"},
+                            "to": [{"email": target_email}],
+                            "subject": subject,
+                            "htmlContent": html_content
+                        }).encode('utf-8'),
+                        headers={
+                            'api-key': BREVO_API_KEY,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        method='POST'
+                    )
+                    try:
+                        with urllib.request.urlopen(req) as response:
+                            res_data = response.read()
+                    except urllib.error.HTTPError as api_err:
+                        error_body = api_err.read().decode()
+                        return Response({'error': f'Brevo API Error: {error_body}'}, status=status.HTTP_400_BAD_REQUEST)
+                    except Exception as api_err:
+                        return Response({'error': f'Brevo API Error: {str(api_err)}'}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    # Fallback to Resend API
+                    req = urllib.request.Request(
+                        'https://api.resend.com/emails',
+                        data=json.dumps({
+                            "from": f"{business_name} <onboarding@resend.dev>",
+                            "to": [target_email],
+                            "subject": subject,
+                            "html": html_content
+                        }).encode('utf-8'),
+                        headers={
+                            'Authorization': f'Bearer {RESEND_API_KEY}',
+                            'Content-Type': 'application/json',
+                            'User-Agent': 'NexusERP/1.0 (Integration)'
+                        },
+                        method='POST'
+                    )
+                    try:
+                        with urllib.request.urlopen(req) as response:
+                            res_data = response.read()
+                    except urllib.error.HTTPError as api_err:
+                        error_body = api_err.read().decode()
+                        return Response({'error': f'Resend API Error: {error_body}'}, status=status.HTTP_400_BAD_REQUEST)
+                    except Exception as api_err:
+                        return Response({'error': f'Resend API Error: {str(api_err)}'}, status=status.HTTP_400_BAD_REQUEST)
                 
                 return Response({'status': 'email sent'})
             else:
