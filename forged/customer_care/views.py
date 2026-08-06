@@ -12,7 +12,7 @@ class SupportTicketViewSet(viewsets.ModelViewSet):
     serializer_class = SupportTicketSerializer
 
     def get_queryset(self):
-        return SupportTicket.objects.for_tenant(self.request.user.tenant_id).order_by('-created_at')
+        return SupportTicket.objects.filter(tenant_id=self.request.user.tenant_id).order_by('-created_at')
 
     def perform_create(self, serializer):
         ticket = serializer.save(
