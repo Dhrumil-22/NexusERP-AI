@@ -10,6 +10,7 @@ import {
   Image as ImageIcon,
   X,
   Sparkles,
+  Bell,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -148,7 +149,10 @@ export function SuperAdminDashboard() {
               style={{ backgroundColor: b.theme_color }}
             />
             {b.unread_support_tickets_count > 0 && (
-              <div className="absolute top-4 right-4 w-4 h-4 bg-red-500 rounded-full shadow-lg shadow-red-500/50 animate-pulse z-20" title={`${b.unread_support_tickets_count} Open Support Tickets`} />
+              <div className="absolute top-4 right-4 px-3 py-1.5 bg-red-500 text-white text-xs font-black tracking-wide rounded-full shadow-lg shadow-red-500/40 animate-pulse z-20 flex items-center gap-1.5 border border-red-400">
+                <Bell className="w-3.5 h-3.5 fill-current" />
+                {b.unread_support_tickets_count} NEW
+              </div>
             )}
             <h3 className="text-xl font-bold mb-2 truncate z-10">{b.name}</h3>
             <div className="flex items-center gap-2 text-muted-foreground z-10">
