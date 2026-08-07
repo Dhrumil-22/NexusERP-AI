@@ -37,6 +37,7 @@ import { HeroPage } from "./components/HeroPage";
 import { Login } from "./components/Login";
 import { AIBusinessSetup } from "./components/AIBusinessSetup";
 import { DebugConsole } from "./components/DebugConsole";
+import { OrderDisplaySystem } from "./components/OrderDisplaySystem";
 
 const queryClient = new QueryClient();
 
@@ -335,6 +336,7 @@ function AuthWrapper() {
   return (
     <>
       <Routes>
+        <Route path="/ods" element={<OrderDisplaySystem />} />
         <Route path="/setup" element={<AIBusinessSetup />} />
         <Route path="/*" element={<Layout />} />
       </Routes>

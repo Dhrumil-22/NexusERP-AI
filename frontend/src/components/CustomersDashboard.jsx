@@ -358,7 +358,8 @@ function CustomerModal({ customers, onClose, onSuccess }) {
               <p className="text-xs text-blue-500/80">{suggestion.first_name} {suggestion.last_name} ({suggestion.phone || 'No phone'})</p>
             </div>
             <button type="button" onClick={() => {
-                showStatus("Info", "You can close this modal and use the existing customer.", "info");
+                selectCustomer(suggestion);
+                showStatus("Success", `${suggestion.first_name} added to selected queue.`, "success");
                 onClose();
             }} className="text-xs bg-blue-500 text-white px-3 py-1.5 rounded-lg font-bold">Use Existing</button>
           </div>
