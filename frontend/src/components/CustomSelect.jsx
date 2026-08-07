@@ -14,6 +14,9 @@ export function CustomSelect({
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const searchInputRef = useRef(null);
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (ref.current && !ref.current.contains(event.target)) {
@@ -23,6 +26,15 @@ export function CustomSelect({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (isOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+    if (!isOpen) {
+      setSearchTerm("");
+    }
+  }, [isOpen]);
 
   // Parse options from children if provided, otherwise use options prop
   const parsedOptions = options || [];
@@ -70,6 +82,13 @@ export function CustomSelect({
       onChange({ target: { value: newValue, name: props.name } }, newValue);
     }
   };
+
+  const filteredOptions = parsedOptions.filter(o => {
+    if (!searchTerm) return true;
+    const label = String(o.label || "").toLowerCase();
+    return label.includes(searchTerm.toLowerCase());
+  });
+
   return (
     <div
       ref={ref}
@@ -92,9 +111,22 @@ export function CustomSelect({
       </button>
 
       {isOpen && (
-        <div className="absolute z-[100] w-full mt-1.5 bg-card border border-border/50 rounded-xl shadow-2xl overflow-hidden glass-panel animate-slide-up origin-top">
+        <div className="absolute z-[100] w-full mt-1.5 bg-card border border-border/50 rounded-xl shadow-2xl overflow-hidden glass-panel animate-slide-up origin-top flex flex-col">
+          <div className="p-2 border-b border-border/50">
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full text-sm px-3 py-1.5 bg-muted/30 border border-border/50 rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
           <ul className="max-h-60 overflow-auto py-1">
-            {parsedOptions.map((option, i) => {
+            {filteredOptions.length === 0 && (
+              <li className="px-3 py-2 text-sm text-muted-foreground text-center">No options found.</li>
+            )}
+            {filteredOptions.map((option, i) => {
               const isSelected = multiple
                 ? (value || []).includes(option.value)
                 : value === option.value;

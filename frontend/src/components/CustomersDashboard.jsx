@@ -120,6 +120,9 @@ export function CustomersDashboard() {
                     Name / Company
                   </th>
                   <th className="px-4 py-3 font-medium">Contact</th>
+                  <th className="px-4 py-3 font-medium text-center">
+                    Order Status
+                  </th>
                   <th className="px-4 py-3 font-medium text-right">
                     Loyalty Points
                   </th>
@@ -156,6 +159,20 @@ export function CustomersDashboard() {
                         <div className="text-sm">{c.email || "No email"}</div>
                         <div className="text-xs text-muted-foreground">
                           {c.phone || "No phone"}
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 text-center">
+                        <div className="flex flex-col items-center gap-1">
+                          {c.latest_order_status ? (
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${c.latest_order_status === 'paid' ? 'bg-green-500/10 text-green-500' : c.latest_order_status === 'open' ? 'bg-blue-500/10 text-blue-500' : 'bg-orange-500/10 text-orange-500'}`}>
+                              {c.latest_order_status}
+                            </span>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">-</span>
+                          )}
+                          <span className="text-xs text-muted-foreground font-medium">
+                            {c.visits || 0} Visits
+                          </span>
                         </div>
                       </td>
                       <td className="px-4 py-4 text-right font-bold text-primary">
