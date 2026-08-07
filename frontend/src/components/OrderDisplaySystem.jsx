@@ -25,7 +25,7 @@ const Header = ({ stats, themeColor, businessName }) => {
   }, []);
 
   return (
-    <div className="flex justify-between items-center p-6 border-b border-border bg-background/50 backdrop-blur-md relative z-20">
+    <div className="flex justify-between items-center px-6 py-4 border-b border-border bg-background/50 backdrop-blur-md relative z-20">
       <div className="flex items-center space-x-4">
         <div className="text-3xl font-bold" style={{ color: themeColor || '#4CAF50' }}>{businessName || 'NexOrder'}</div>
         <div className="h-8 w-px bg-border" />
@@ -90,25 +90,25 @@ const PreparingCard = ({ order }) => {
       initial={{ opacity: 0, y: 50, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-      className="glass-panel rounded-[16px] p-6 flex justify-between items-center overflow-hidden relative group"
+      className="glass-panel rounded-xl p-4 flex justify-between items-center overflow-hidden relative group"
     >
       <div className="absolute top-0 left-0 h-full w-1.5 bg-[#FF9800]" />
-      <div>
+      <div className="pl-2">
         <motion.div 
           animate={{ scale: [1, 1.02, 1] }} 
           transition={{ repeat: Infinity, duration: 4 }}
-          className="text-6xl font-bold text-foreground tracking-tighter mb-2"
+          className="text-4xl font-bold text-foreground tracking-tighter mb-1"
         >
           #{order.id}
         </motion.div>
         {order.customerName && (
-          <div className="text-xl font-semibold text-muted-foreground">{order.customerName}</div>
+          <div className="text-lg font-semibold text-muted-foreground">{order.customerName}</div>
         )}
       </div>
       <div className="flex flex-col items-end justify-center">
-        <div className="text-[#FF9800] text-3xl font-mono font-bold tracking-tight">{elapsed}</div>
-        <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">Elapsed</div>
-        <div className="w-32 h-1.5 bg-border rounded-full mt-4 overflow-hidden relative">
+        <div className="text-[#FF9800] text-2xl font-mono font-bold tracking-tight">{elapsed}</div>
+        <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">Elapsed</div>
+        <div className="w-24 h-1.5 bg-border rounded-full mt-2 overflow-hidden relative">
           <motion.div 
             className="h-full bg-[#FF9800] absolute top-0 left-0" 
             initial={{ width: "0%" }}
@@ -128,28 +128,28 @@ const ReadyCard = ({ order, themeColor }) => {
       initial={{ opacity: 0, x: -50, scale: 0.95 }}
       animate={{ 
         opacity: 1, x: 0, scale: 1,
-        boxShadow: ["0px 0px 0px rgba(0, 230, 118, 0)", "0px 0px 25px rgba(0, 230, 118, 0.3)", "0px 0px 0px rgba(0, 230, 118, 0)"]
+        boxShadow: ["0px 0px 0px rgba(0, 230, 118, 0)", "0px 0px 15px rgba(0, 230, 118, 0.2)", "0px 0px 0px rgba(0, 230, 118, 0)"]
       }}
       transition={{ 
         boxShadow: { duration: 2, repeat: Infinity }
       }}
       exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-      className="bg-card/90 backdrop-blur-xl border-2 border-[#00E676]/40 rounded-[16px] p-8 flex justify-between items-center relative overflow-hidden shadow-lg"
+      className="bg-card/90 backdrop-blur-xl border-2 border-[#00E676]/40 rounded-xl p-5 flex justify-between items-center relative overflow-hidden shadow-lg"
     >
       <div className="absolute top-0 left-0 h-full w-2 bg-[#00E676]" />
-      <div>
-        <div className="text-7xl font-bold text-foreground tracking-tighter mb-2 drop-shadow-md">#{order.id}</div>
+      <div className="pl-2">
+        <div className="text-5xl font-bold text-foreground tracking-tighter mb-1 drop-shadow-sm">#{order.id}</div>
         {order.customerName && (
-          <div className="text-2xl font-bold text-muted-foreground">{order.customerName}</div>
+          <div className="text-lg font-bold text-muted-foreground">{order.customerName}</div>
         )}
       </div>
-      <div className="flex flex-col items-end space-y-4">
-        <div className="flex items-center space-x-2 text-[#00E676] bg-[#00E676]/10 px-5 py-3 rounded-xl border border-[#00E676]/20">
-          <CheckCircle className="w-8 h-8" />
-          <span className="text-2xl font-bold uppercase tracking-widest">Ready</span>
+      <div className="flex flex-col items-end space-y-2">
+        <div className="flex items-center space-x-1.5 text-[#00E676] bg-[#00E676]/10 px-3 py-1.5 rounded-lg border border-[#00E676]/20">
+          <CheckCircle className="w-5 h-5" />
+          <span className="text-lg font-bold uppercase tracking-widest">Ready</span>
         </div>
         {order.counter && (
-          <div className="text-xl font-bold text-primary-foreground uppercase tracking-wide px-5 py-2 rounded-lg" style={{ backgroundColor: themeColor || 'hsl(var(--primary))' }}>
+          <div className="text-sm font-bold text-primary-foreground uppercase tracking-wide px-3 py-1.5 rounded-lg" style={{ backgroundColor: themeColor || 'hsl(var(--primary))' }}>
             {order.counter}
           </div>
         )}
@@ -268,14 +268,14 @@ export const OrderDisplaySystem = () => {
       <div className="flex-1 flex overflow-hidden relative z-10">
         {/* Left Column - Preparing */}
         <div className="w-1/2 border-r border-border flex flex-col relative overflow-hidden bg-card/30">
-          <div className="p-8 bg-gradient-to-b from-background/90 to-transparent sticky top-0 z-10 backdrop-blur-sm border-b border-border/10">
-            <h2 className="text-4xl font-bold text-foreground flex items-center tracking-tight">
-              <span className="w-5 h-5 rounded-full bg-[#FF9800] mr-5 shadow-[0_0_20px_#FF9800]" />
+          <div className="px-6 py-4 bg-gradient-to-b from-background/90 to-transparent sticky top-0 z-10 backdrop-blur-sm border-b border-border/10">
+            <h2 className="text-2xl font-bold text-foreground flex items-center tracking-tight">
+              <span className="w-4 h-4 rounded-full bg-[#FF9800] mr-4 shadow-[0_0_15px_#FF9800]" />
               Preparing
             </h2>
           </div>
           
-          <div className="flex-1 overflow-y-auto p-8 space-y-5 scrollbar-hide">
+          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3 scrollbar-hide">
             <AnimatePresence>
               {preparingOrders.map(order => (
                 <PreparingCard key={order.id} order={order} />
@@ -291,14 +291,14 @@ export const OrderDisplaySystem = () => {
 
         {/* Right Column - Ready */}
         <div className="w-1/2 flex flex-col relative overflow-hidden bg-card/20">
-          <div className="p-8 bg-gradient-to-b from-background/90 to-transparent sticky top-0 z-10 backdrop-blur-sm border-b border-border/10">
-            <h2 className="text-4xl font-bold text-foreground flex items-center tracking-tight">
-              <span className="w-5 h-5 rounded-full bg-[#00E676] mr-5 shadow-[0_0_20px_#00E676]" />
+          <div className="px-6 py-4 bg-gradient-to-b from-background/90 to-transparent sticky top-0 z-10 backdrop-blur-sm border-b border-border/10">
+            <h2 className="text-2xl font-bold text-foreground flex items-center tracking-tight">
+              <span className="w-4 h-4 rounded-full bg-[#00E676] mr-4 shadow-[0_0_15px_#00E676]" />
               Ready for Pickup
             </h2>
           </div>
           
-          <div className="flex-1 overflow-y-auto p-8 space-y-6 scrollbar-hide">
+          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 scrollbar-hide">
             <AnimatePresence>
               {readyOrders.map(order => (
                 <ReadyCard key={order.id} order={order} themeColor={themeColor} />
