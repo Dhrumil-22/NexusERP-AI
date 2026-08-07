@@ -10,6 +10,7 @@ Designed for food-service businesses requiring table management and kitchen comm
 * **Modules Activated:**
   * `table_order_mgmt`: Manages table layouts, current occupancy, and live orders per table.
   * `kitchen_kot`: Generates Kitchen Order Tickets (KOT) to route orders directly to the chefs.
+  * `order_display_system`: Real-time display screen for customer order status (Preparing / Ready).
   * `inventory`: Tracks raw ingredients (e.g., coffee beans, milk) and auto-deducts them when food is sold.
   * `billing_invoicing` / `invoicing_finance`: Handles final checkout, bill splitting, and emailing receipts to customers.
   * `employee_hr`: Manages waiter shifts and attendance.

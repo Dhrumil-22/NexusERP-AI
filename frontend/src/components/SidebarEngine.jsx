@@ -22,6 +22,7 @@ import {
   X,
   LayoutDashboard,
   User,
+  MonitorPlay,
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useAuth } from "../context/AuthContext";
@@ -58,6 +59,7 @@ const ICON_MAP = {
   notifications: Bell,
   table_order_mgmt: Coffee,
   kitchen_kot: ChefHat,
+  order_display_system: MonitorPlay,
   service_packages: Box,
   attendance: Clock,
 };
@@ -70,7 +72,7 @@ export function SidebarEngine({ manifests, isOpen = true, setIsOpen }) {
   const CATEGORIES = [
     {
       title: "Hospitality & F&B",
-      modules: ["table_order_mgmt", "kitchen_kot"],
+      modules: ["table_order_mgmt", "kitchen_kot", "order_display_system"],
     },
     {
       title: "Sales & CRM",
