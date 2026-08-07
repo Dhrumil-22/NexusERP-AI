@@ -20,6 +20,7 @@ export function CustomersDashboard() {
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
   const [isPointsModalOpen, setIsPointsModalOpen] = useState(false);
+  const [isBillsModalOpen, setIsBillsModalOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   const fetchCustomers = async () => {
@@ -192,6 +193,15 @@ export function CustomersDashboard() {
                         <button
                           onClick={() => {
                             setSelectedCustomer(c);
+                            setIsBillsModalOpen(true);
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-green-500/10 text-green-600 hover:bg-green-500 hover:text-white transition-colors"
+                        >
+                          Bills
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedCustomer(c);
                             setIsNoteModalOpen(true);
                           }}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
@@ -210,6 +220,7 @@ export function CustomersDashboard() {
 
       {isCustomerModalOpen && (
         <CustomerModal
+          customers={customers}
           onClose={() => setIsCustomerModalOpen(false)}
           onSuccess={() => {
             setIsCustomerModalOpen(false);
@@ -236,6 +247,13 @@ export function CustomersDashboard() {
             setIsPointsModalOpen(false);
             fetchCustomers();
           }}
+        />
+      )}
+
+      {isBillsModalOpen && selectedCustomer && (
+        <CustomerBillsModal
+          customer={selectedCustomer}
+          onClose={() => setIsBillsModalOpen(false)}
         />
       )}
     </div>
@@ -266,8 +284,8 @@ function StatCard({ title, value, icon, themeColor }) {
   );
 }
 
-function CustomerModal({ onClose, onSuccess }) {
-  const { token } = useAuth();
+function CustomerModal({ customers, onClose, onSuccess }) {
+  const { token, showStatus } = useAuth();
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -277,6 +295,20 @@ function CustomerModal({ onClose, onSuccess }) {
     loyalty_points: 0,
   });
   const [loading, setLoading] = useState(false);
+  const [suggestion, setSuggestion] = useState(null);
+
+  useEffect(() => {
+    if ((formData.phone && formData.phone.length > 5) || (formData.first_name && formData.first_name.length > 2)) {
+      const match = customers.find(
+        (c) =>
+          (formData.phone && c.phone === formData.phone) ||
+          (formData.first_name && c.first_name.toLowerCase() === formData.first_name.toLowerCase() && formData.last_name && c.last_name.toLowerCase() === formData.last_name.toLowerCase())
+      );
+      setSuggestion(match || null);
+    } else {
+      setSuggestion(null);
+    }
+  }, [formData.phone, formData.first_name, formData.last_name, customers]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -298,6 +330,18 @@ function CustomerModal({ onClose, onSuccess }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in p-4">
       <div className="glass-panel w-full max-w-lg rounded-2xl p-6 shadow-2xl relative animate-slide-up">
         <h2 className="text-xl font-bold mb-6">Add New Customer</h2>
+        {suggestion && (
+          <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl flex justify-between items-center">
+            <div>
+              <p className="text-sm font-bold text-blue-600">Suggestion: Customer already exists?</p>
+              <p className="text-xs text-blue-500/80">{suggestion.first_name} {suggestion.last_name} ({suggestion.phone || 'No phone'})</p>
+            </div>
+            <button type="button" onClick={() => {
+                showStatus("Info", "You can close this modal and use the existing customer.", "info");
+                onClose();
+            }} className="text-xs bg-blue-500 text-white px-3 py-1.5 rounded-lg font-bold">Use Existing</button>
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
@@ -541,6 +585,82 @@ function PointsModal({ customer, onClose, onSuccess }) {
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+}
+
+function CustomerBillsModal({ customer, onClose }) {
+  const { token, themeColor } = useAuth();
+  const [bills, setBills] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBills = async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/api/invoicing_finance/invoices/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        // Filter bills for this customer
+        const customerBills = res.data.filter(b => b.customer_id === customer.id);
+        setBills(customerBills);
+      } catch (err) {
+        console.error("Failed to fetch bills", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBills();
+  }, [customer, token]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in p-4">
+      <div className="glass-panel w-full max-w-2xl rounded-2xl flex flex-col shadow-2xl relative animate-slide-up" style={{ maxHeight: "80vh" }}>
+        <div className="p-6 border-b border-border/50 flex justify-between items-center">
+          <div>
+            <h2 className="text-xl font-bold">Billing History</h2>
+            <p className="text-sm text-muted-foreground">
+              For {customer.first_name} {customer.last_name}
+            </p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-muted rounded-full transition-colors">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-6 flex-1 overflow-y-auto space-y-4">
+          {loading ? (
+             <div className="flex justify-center p-8">
+               <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+             </div>
+          ) : bills.length > 0 ? (
+            <div className="space-y-3">
+              {bills.map(b => (
+                <div key={b.id} className="p-4 bg-muted/20 border border-border/50 rounded-xl flex justify-between items-center group hover:border-primary/50 transition-colors">
+                  <div>
+                    <div className="font-bold flex items-center gap-2">
+                      <span className="text-xs uppercase px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold">{b.document_type}</span>
+                      #{b.id.substring(0,8).toUpperCase()}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {new Date(b.created_at).toLocaleString('en-GB').replace(/\//g, '-')}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-lg">₹{b.total}</div>
+                    <div className={`text-xs font-bold uppercase ${b.status === 'paid' ? 'text-green-500' : 'text-orange-500'}`}>
+                      {b.status}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-muted-foreground py-8">
+              No bills found for this customer.
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

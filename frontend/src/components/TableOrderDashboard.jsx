@@ -352,10 +352,10 @@ export function TableOrderDashboard() {
                                   }
                                   className="w-full text-sm px-3 py-2 bg-background border border-border/50 rounded-lg"
                                 >
-                                  <option value="">Select a customer...</option>
+                                  <option value="">Search customer by name or phone...</option>
                                   {customers.map((c) => (
                                     <option key={c.id} value={c.id}>
-                                      {c.name}
+                                      {c.name}{c.phone ? ` (${c.phone})` : ''}
                                     </option>
                                   ))}
                                 </CustomSelect>
@@ -659,10 +659,10 @@ export function TableOrderDashboard() {
                   onChange={(e) => setNewOrderCustomerId(e.target.value)}
                   className="w-full text-sm px-3 py-2 bg-muted/30 border border-border/50 rounded-lg"
                 >
-                  <option value="">Select a customer...</option>
+                  <option value="">Search customer by name or phone...</option>
                   {customers.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.name}
+                      {c.name}{c.phone ? ` (${c.phone})` : ''}
                     </option>
                   ))}
                 </CustomSelect>
