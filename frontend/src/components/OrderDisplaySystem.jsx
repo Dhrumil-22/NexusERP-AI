@@ -194,7 +194,7 @@ export const OrderDisplaySystem = () => {
     const fetchOrders = async () => {
       if (!token) return;
       try {
-        const res = await axios.get(`${API_BASE}/api/kitchen/tickets/`, {
+        const res = await axios.get(`${API_BASE}/api/kot/tickets/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         
