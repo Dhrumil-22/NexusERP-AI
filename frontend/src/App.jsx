@@ -83,7 +83,13 @@ function Layout() {
 
   // Filter modules based on role
   // As requested, all modules are synced between owner and staff
-  let visibleManifests = manifests;
+  let visibleManifests = [...manifests];
+  
+  // Inject Order Display System for Cafe/Restaurant ERPs
+  const hasTableMgmt = visibleManifests.some(m => m.module_id === "table_order_mgmt");
+  if (hasTableMgmt && !visibleManifests.some(m => m.module_id === "order_display_system")) {
+    visibleManifests.push({ module_id: "order_display_system", version: "1.0.0" });
+  }
 
   const functionalManifests = visibleManifests.filter(
     (m) =>
@@ -179,7 +185,7 @@ function ModuleView({ manifests, token }) {
 
   if (
     !manifest &&
-    !["auth", "attendance", "notifications", "customer_care"].includes(moduleId)
+    !["auth", "attendance", "notifications", "customer_care", "order_display_system"].includes(moduleId)
   ) {
     return (
       <div className="p-8 text-destructive border rounded m-8 bg-destructive/10">
@@ -222,6 +228,10 @@ function ModuleView({ manifests, token }) {
 
   if (moduleId === "table_order_mgmt") {
     return <TableOrderDashboard />;
+  }
+
+  if (moduleId === "order_display_system") {
+    return <OrderDisplaySystem />;
   }
 
   if (moduleId === "kitchen_kot") {
