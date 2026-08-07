@@ -194,12 +194,22 @@ export const OrderDisplaySystem = () => {
     const fetchOrders = async () => {
       if (!token) return;
       try {
-        const res = await axios.get(`${API_BASE}/api/kot/tickets/`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const [ticketsRes, ordersRes] = await Promise.all([
+          axios.get(`${API_BASE}/api/kot/tickets/`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`${API_BASE}/api/tables/orders/`, { headers: { Authorization: `Bearer ${token}` } })
+        ]);
         
-        const tickets = res.data;
-        const mappedOrders = tickets.map(t => ({
+        const tickets = ticketsRes.data;
+        const allOrders = ordersRes.data;
+
+        // Only keep tickets for orders that are currently active (not paid or deleted)
+        const activeOrderIds = new Set(
+          allOrders.filter(o => o.status !== 'paid').map(o => String(o.id))
+        );
+
+        const activeTickets = tickets.filter(t => activeOrderIds.has(String(t.order_id)));
+
+        const mappedOrders = activeTickets.map(t => ({
           id: t.id.split('-')[0].substring(0, 4).toUpperCase(),
           customerName: `Table ${t.table_number}`,
           status: t.status === 'pending' ? 'preparing' : t.status, 
