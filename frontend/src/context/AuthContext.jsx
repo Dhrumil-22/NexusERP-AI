@@ -76,6 +76,20 @@ export function AuthProvider({ children }) {
   // Global Status Modal State
   const [statusMessage, setStatusMessage] = useState(null);
   
+  // Active Customers Queue — customers selected/checked-in for table orders
+  const [activeCustomers, setActiveCustomers] = useState([]);
+
+  const selectCustomer = (customer) => {
+    setActiveCustomers(prev => {
+      if (prev.find(c => c.id === customer.id)) return prev;
+      return [...prev, customer];
+    });
+  };
+
+  const deselectCustomer = (customerId) => {
+    setActiveCustomers(prev => prev.filter(c => c.id !== customerId));
+  };
+  
   const showStatus = (title, message, type) => {
     setStatusMessage({ title, message, type });
   };
@@ -260,6 +274,9 @@ export function AuthProvider({ children }) {
         statusMessage,
         setStatusMessage,
         showStatus,
+        activeCustomers,
+        selectCustomer,
+        deselectCustomer,
         toggleThemeMode,
         login,
         logout,

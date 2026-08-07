@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Coffee, Plus, ChevronRight, User, Trash2, Send, Search, UserPlus } from "lucide-react";
+import { Coffee, Plus, ChevronRight, User, Trash2, Send } from "lucide-react";
 import { CustomSelect } from "./CustomSelect";
 
 import { API_BASE } from "../config";
 
 export function TableOrderDashboard() {
-  const { token, themeColor , showStatus } = useAuth();
+  const { token, themeColor, showStatus, activeCustomers, deselectCustomer } = useAuth();
   const navigate = useNavigate();
   const [tables, setTables] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -20,9 +20,6 @@ export function TableOrderDashboard() {
 
   const [showOpenTableModal, setShowOpenTableModal] = useState(false);
   const [newOrderCustomerId, setNewOrderCustomerId] = useState("");
-  const [customerSearchText, setCustomerSearchText] = useState("");
-  const [showCustomerSuggestions, setShowCustomerSuggestions] = useState(false);
-  const [isCreatingCustomer, setIsCreatingCustomer] = useState(false);
 
   const [showAddItem, setShowAddItem] = useState(false);
   const [activeOrderId, setActiveOrderId] = useState(null);
@@ -76,43 +73,22 @@ export function TableOrderDashboard() {
 
   const handleOpenTableSubmit = async (e) => {
     e.preventDefault();
-    if (!activeTable) return;
+    if (!activeTable || !newOrderCustomerId) return;
     try {
-      let customerId = newOrderCustomerId;
-      // If no customer selected but text entered, create a new customer
-      if (!customerId && customerSearchText.trim()) {
-        setIsCreatingCustomer(true);
-        const nameParts = customerSearchText.trim().split(" ");
-        const firstName = nameParts[0] || customerSearchText.trim();
-        const lastName = nameParts.slice(1).join(" ") || "";
-        const newCustRes = await axios.post(
-          `${API_BASE}/api/customers/customers/`,
-          { first_name: firstName, last_name: lastName },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        customerId = newCustRes.data.id;
-        setIsCreatingCustomer(false);
-      }
-      if (!customerId) {
-        showStatus("Error", "Please enter a customer name or select an existing one.", "error");
-        return;
-      }
       await axios.post(
         `${API_BASE}/api/tables/orders/`,
         {
           table: activeTable.id,
           status: "open",
-          customer_id: customerId,
+          customer_id: newOrderCustomerId,
         },
         { headers: { Authorization: `Bearer ${token}` } },
       );
       setShowOpenTableModal(false);
       setNewOrderCustomerId("");
-      setCustomerSearchText("");
       fetchData();
     } catch (err) {
       console.error(err);
-      setIsCreatingCustomer(false);
     }
   };
 
@@ -120,11 +96,17 @@ export function TableOrderDashboard() {
     if (isPaying) return;
     setIsPaying(true);
     try {
+      // Find the order to get customer_id before paying
+      const orderToPay = orders.find(o => String(o.id) === String(orderId));
       await axios.post(
         `${API_BASE}/api/tables/orders/${orderId}/pay/`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
+      // Remove customer from active queue after payment
+      if (orderToPay?.customer_id) {
+        deselectCustomer(orderToPay.customer_id);
+      }
       setActiveTable(null);
       navigate("/module/invoicing_finance?tab=bill");
     } catch (err) {
@@ -366,13 +348,23 @@ export function TableOrderDashboard() {
                                 <label className="text-xs font-bold text-muted-foreground uppercase">
                                   Change Customer
                                 </label>
-                                <CustomerAutocomplete
-                                  customers={customers}
-                                  onSelect={(id) =>
-                                    handleChangeCustomer(activeOrder.id, id)
+                                <CustomSelect
+                                  value={activeOrder.customer_id || ""}
+                                  onChange={(e) =>
+                                    handleChangeCustomer(
+                                      activeOrder.id,
+                                      e.target.value,
+                                    )
                                   }
-                                  placeholder="Type customer name..."
-                                />
+                                  className="w-full text-sm px-3 py-2 bg-background border border-border/50 rounded-lg"
+                                >
+                                  <option value="">Select customer...</option>
+                                  {activeCustomers.map((c) => (
+                                    <option key={c.id} value={c.id}>
+                                      {c.name || `${c.first_name} ${c.last_name}`}
+                                    </option>
+                                  ))}
+                                </CustomSelect>
                               </div>
 
                               <button
@@ -665,90 +657,45 @@ export function TableOrderDashboard() {
             <form onSubmit={handleOpenTableSubmit} className="p-6 space-y-4">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-muted-foreground uppercase">
-                  Customer Name
+                  Select Customer
                 </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={customerSearchText}
-                    onChange={(e) => {
-                      setCustomerSearchText(e.target.value);
-                      setNewOrderCustomerId("");
-                      setShowCustomerSuggestions(true);
-                    }}
-                    onFocus={() => setShowCustomerSuggestions(true)}
-                    placeholder="Type customer name or phone..."
-                    className="w-full px-3 py-2 bg-muted/30 border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 pr-10"
-                  />
-                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  {newOrderCustomerId && (
-                    <div className="mt-2 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-lg text-xs text-green-600 font-bold">
-                      ✓ Existing customer selected
-                    </div>
-                  )}
-                  {showCustomerSuggestions && customerSearchText.trim().length > 0 && !newOrderCustomerId && (
-                    <div className="absolute z-50 w-full mt-1 bg-card border border-border/50 rounded-xl shadow-2xl overflow-hidden">
-                      <ul className="max-h-48 overflow-y-auto">
-                        {customers
-                          .filter(c => {
-                            const q = customerSearchText.toLowerCase();
-                            return (c.name && c.name.toLowerCase().includes(q)) ||
-                                   (c.phone && c.phone.includes(q)) ||
-                                   (c.first_name && c.first_name.toLowerCase().includes(q));
-                          })
-                          .map(c => (
-                            <li
-                              key={c.id}
-                              onClick={() => {
-                                setNewOrderCustomerId(c.id);
-                                setCustomerSearchText(c.name || `${c.first_name} ${c.last_name}`);
-                                setShowCustomerSuggestions(false);
-                              }}
-                              className="px-3 py-2.5 text-sm cursor-pointer hover:bg-muted/50 flex items-center gap-2 transition-colors border-b border-border/20 last:border-0"
-                            >
-                              <User className="w-4 h-4 text-muted-foreground shrink-0" />
-                              <div>
-                                <div className="font-semibold">{c.name}</div>
-                                {c.phone && <div className="text-xs text-muted-foreground">{c.phone}</div>}
-                              </div>
-                            </li>
-                          ))}
-                      </ul>
-                      {customers.filter(c => {
-                        const q = customerSearchText.toLowerCase();
-                        return (c.name && c.name.toLowerCase().includes(q)) ||
-                               (c.phone && c.phone.includes(q)) ||
-                               (c.first_name && c.first_name.toLowerCase().includes(q));
-                      }).length === 0 && (
-                        <div className="px-3 py-3 text-sm text-muted-foreground flex items-center gap-2">
-                          <UserPlus className="w-4 h-4" />
-                          <span>New customer <strong>"{customerSearchText}"</strong> will be created</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
+                {activeCustomers.length === 0 ? (
+                  <div className="p-4 bg-orange-500/10 border border-orange-500/20 rounded-xl text-center">
+                    <p className="text-sm font-bold text-orange-600">No customers selected</p>
+                    <p className="text-xs text-orange-500/80 mt-1">Go to Customer Module first, select or add a customer, then come back here.</p>
+                  </div>
+                ) : (
+                  <CustomSelect
+                    required
+                    value={newOrderCustomerId}
+                    onChange={(e) => setNewOrderCustomerId(e.target.value)}
+                    className="w-full text-sm px-3 py-2 bg-muted/30 border border-border/50 rounded-lg"
+                  >
+                    <option value="">Select customer...</option>
+                    {activeCustomers.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name || `${c.first_name} ${c.last_name}`}
+                      </option>
+                    ))}
+                  </CustomSelect>
+                )}
               </div>
 
               <div className="pt-4 flex gap-3">
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowOpenTableModal(false);
-                    setCustomerSearchText("");
-                    setNewOrderCustomerId("");
-                  }}
+                  onClick={() => setShowOpenTableModal(false)}
                   className="flex-1 px-4 py-3 border border-border/50 rounded-xl font-bold text-muted-foreground hover:bg-muted/50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={!customerSearchText.trim() || isCreatingCustomer}
+                  disabled={!newOrderCustomerId}
                   className="flex-1 px-4 py-3 rounded-xl font-bold text-white transition-transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   style={{ backgroundColor: themeColor }}
                 >
-                  {isCreatingCustomer ? "Creating..." : "Start Order"}
+                  Start Order
                 </button>
               </div>
             </form>
@@ -759,65 +706,3 @@ export function TableOrderDashboard() {
   );
 }
 
-function CustomerAutocomplete({ customers, onSelect, placeholder }) {
-  const [text, setText] = useState("");
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const ref = React.useRef(null);
-
-  React.useEffect(() => {
-    function handleClickOutside(e) {
-      if (ref.current && !ref.current.contains(e.target)) {
-        setShowSuggestions(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const filtered = customers.filter(c => {
-    if (!text.trim()) return false;
-    const q = text.toLowerCase();
-    return (c.name && c.name.toLowerCase().includes(q)) ||
-           (c.phone && c.phone.includes(q)) ||
-           (c.first_name && c.first_name.toLowerCase().includes(q));
-  });
-
-  return (
-    <div ref={ref} className="relative">
-      <input
-        type="text"
-        value={text}
-        onChange={(e) => {
-          setText(e.target.value);
-          setShowSuggestions(true);
-        }}
-        onFocus={() => text.trim() && setShowSuggestions(true)}
-        placeholder={placeholder || "Type customer name..."}
-        className="w-full px-3 py-2 bg-muted/30 border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
-      />
-      {showSuggestions && filtered.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-card border border-border/50 rounded-xl shadow-2xl overflow-hidden">
-          <ul className="max-h-40 overflow-y-auto">
-            {filtered.map(c => (
-              <li
-                key={c.id}
-                onClick={() => {
-                  onSelect(c.id);
-                  setText(c.name || `${c.first_name} ${c.last_name}`);
-                  setShowSuggestions(false);
-                }}
-                className="px-3 py-2 text-sm cursor-pointer hover:bg-muted/50 flex items-center gap-2 transition-colors border-b border-border/20 last:border-0"
-              >
-                <User className="w-4 h-4 text-muted-foreground shrink-0" />
-                <div>
-                  <div className="font-semibold">{c.name}</div>
-                  {c.phone && <div className="text-xs text-muted-foreground">{c.phone}</div>}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-}

@@ -9,12 +9,14 @@ import {
   Save,
   X,
   Activity,
+  CheckCircle2,
+  Circle,
 } from "lucide-react";
 
 import { API_BASE } from "../config";
 
 export function CustomersDashboard() {
-  const { token, themeColor , showStatus } = useAuth();
+  const { token, themeColor, showStatus, activeCustomers, selectCustomer, deselectCustomer } = useAuth();
   const [customers, setCustomers] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
@@ -87,9 +89,9 @@ export function CustomersDashboard() {
           themeColor={themeColor}
         />
         <StatCard
-          title="Recent Activity"
-          value="Active"
-          icon={<Activity />}
+          title="Active / Selected"
+          value={activeCustomers.length}
+          icon={<CheckCircle2 />}
           themeColor={themeColor}
         />
       </div>
@@ -181,6 +183,22 @@ export function CustomersDashboard() {
                         <Award className="w-3.5 h-3.5 inline-block text-yellow-500 mb-0.5 ml-1" />
                       </td>
                       <td className="px-4 py-4 text-right space-x-2">
+                        {activeCustomers.find(ac => ac.id === c.id) ? (
+                          <button
+                            onClick={() => deselectCustomer(c.id)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors"
+                            style={{ backgroundColor: themeColor }}
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Selected
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => selectCustomer(c)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-border/50 text-muted-foreground hover:bg-muted/50 transition-colors"
+                          >
+                            <Circle className="w-3.5 h-3.5" /> Select
+                          </button>
+                        )}
                         <button
                           onClick={() => {
                             setSelectedCustomer(c);
@@ -285,7 +303,7 @@ function StatCard({ title, value, icon, themeColor }) {
 }
 
 function CustomerModal({ customers, onClose, onSuccess }) {
-  const { token, showStatus } = useAuth();
+  const { token, showStatus, selectCustomer } = useAuth();
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -314,9 +332,12 @@ function CustomerModal({ customers, onClose, onSuccess }) {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post(`${API_BASE}/api/customers/customers/`, formData, {
+      const res = await axios.post(`${API_BASE}/api/customers/customers/`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      // Auto-select the new customer so they appear in Table Order dropdown
+      selectCustomer(res.data);
+      showStatus("Success", `${formData.first_name} added & selected for table orders`, "success");
       onSuccess();
     } catch (err) {
       console.error(err);
