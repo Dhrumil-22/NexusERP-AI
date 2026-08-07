@@ -4,17 +4,8 @@ import { Wifi, Clock, CheckCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { cn } from '../lib/utils';
 
-// Mock Data generation
-const generateMockOrders = () => {
-  const base = [
-    { id: '1048', customerName: 'Rahul', status: 'ready', counter: 'Counter 2', time: Date.now() - 300000 },
-    { id: '1050', customerName: 'Amit', status: 'ready', counter: 'Counter 1', time: Date.now() - 150000 },
-    { id: '1052', customerName: 'Priya', status: 'preparing', time: Date.now() - 314000 },
-    { id: '1053', customerName: 'Neha', status: 'preparing', time: Date.now() - 162000 },
-    { id: '1054', customerName: 'Vikram', status: 'preparing', time: Date.now() - 45000 },
-  ];
-  return base;
-};
+import axios from 'axios';
+import { API_BASE } from '../config';
 
 const Header = ({ stats, themeColor, businessName }) => {
   const [time, setTime] = useState(new Date());
@@ -193,52 +184,40 @@ const FooterTicker = () => {
 };
 
 export const OrderDisplaySystem = () => {
-  const { themeColor, themeMode, businessName } = useAuth();
-  const [orders, setOrders] = useState(generateMockOrders());
-  const [completedCount, setCompletedCount] = useState(142);
+  const { token, themeColor, themeMode, businessName } = useAuth();
+  const [orders, setOrders] = useState([]);
+  const [completedCount, setCompletedCount] = useState(0);
 
-  // Simulation: Move orders from preparing to ready, and remove ready after time
   useEffect(() => {
-    const interval = setInterval(() => {
-      setOrders(prev => {
-        let newOrders = [...prev];
+    let interval;
+    
+    const fetchOrders = async () => {
+      if (!token) return;
+      try {
+        const res = await axios.get(`${API_BASE}/api/kitchen/tickets/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         
-        // Randomly add a new order
-        if (Math.random() > 0.7 && newOrders.length < 10) {
-          const newId = Math.floor(Math.random() * 1000) + 1000;
-          newOrders.push({
-            id: newId.toString(),
-            customerName: `Guest ${newId}`,
-            status: 'preparing',
-            time: Date.now()
-          });
-        }
+        const tickets = res.data;
+        const mappedOrders = tickets.map(t => ({
+          id: t.id.split('-')[0].substring(0, 4).toUpperCase(),
+          customerName: `Table ${t.table_number}`,
+          status: t.status === 'pending' ? 'preparing' : t.status, 
+          time: new Date(t.created_at).getTime(),
+          counter: 'Counter 1'
+        }));
+        
+        setOrders(mappedOrders);
+      } catch (err) {
+        console.error('Failed to fetch orders:', err);
+      }
+    };
 
-        // Randomly transition one from preparing to ready
-        const preparing = newOrders.filter(o => o.status === 'preparing');
-        if (preparing.length > 0 && Math.random() > 0.6) {
-          const toReady = preparing[0];
-          newOrders = newOrders.map(o => {
-            if (o.id === toReady.id) {
-              return { ...o, status: 'ready', counter: `Counter ${Math.floor(Math.random() * 3) + 1}` };
-            }
-            return o;
-          });
-        }
+    fetchOrders();
+    interval = setInterval(fetchOrders, 3000); 
 
-        // Randomly remove a ready order (completed)
-        const ready = newOrders.filter(o => o.status === 'ready');
-        if (ready.length > 3 && Math.random() > 0.5) {
-          const toRemove = ready[0];
-          newOrders = newOrders.filter(o => o.id !== toRemove.id);
-          setCompletedCount(c => c + 1);
-        }
-
-        return newOrders;
-      });
-    }, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [token]);
 
   const preparingOrders = orders.filter(o => o.status === 'preparing').sort((a,b) => a.time - b.time);
   const readyOrders = orders.filter(o => o.status === 'ready').sort((a,b) => b.time - a.time);
