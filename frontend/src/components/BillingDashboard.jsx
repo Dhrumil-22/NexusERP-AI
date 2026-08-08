@@ -400,7 +400,7 @@ function InvoiceModal({ onClose, onSuccess }) {
                       .filter((p) => parseFloat(p.stock_quantity) > 0)
                       .map((p) => (
                         <option key={p.id} value={p.id}>
-                          {p.name}
+                          {p.name} - Stock: {p.stock_quantity}
                         </option>
                       ))}
                   </CustomSelect>
@@ -418,10 +418,16 @@ function InvoiceModal({ onClose, onSuccess }) {
                   <input
                     type="number"
                     min="1"
-                    value={line.quantity}
-                    onChange={(e) =>
-                      handleLineChange(i, "quantity", e.target.value)
+                    max={
+                      products.find((p) => String(p.id) === String(line.product))?.stock_quantity || ""
                     }
+                    value={line.quantity}
+                    onChange={(e) => {
+                      const maxStock = products.find((p) => String(p.id) === String(line.product))?.stock_quantity;
+                      let val = parseInt(e.target.value);
+                      if (maxStock !== undefined && val > maxStock) val = maxStock;
+                      handleLineChange(i, "quantity", val);
+                    }}
                     className="w-full glass-input rounded-xl px-3 py-2 text-sm"
                     placeholder="Qty"
                   />

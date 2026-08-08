@@ -312,7 +312,7 @@ export function SalesOrdersDashboard() {
                         .filter((p) => parseFloat(p.stock_quantity) > 0)
                         .map((p) => (
                           <option key={p.id} value={p.id}>
-                            {p.name} (₹{p.price})
+                            {p.name} (₹{p.price}) - Stock: {p.stock_quantity}
                           </option>
                         ))}
                     </CustomSelect>
@@ -320,6 +320,9 @@ export function SalesOrdersDashboard() {
                       <input
                         type="number"
                         min="1"
+                        max={
+                          products.find((p) => String(p.id) === String(newItem.product_id))?.stock_quantity || ""
+                        }
                         required
                         value={newItem.quantity}
                         onChange={(e) =>
@@ -328,12 +331,20 @@ export function SalesOrdersDashboard() {
                             quantity: parseInt(e.target.value),
                           })
                         }
-                        className="w-20 text-sm px-3 py-2 bg-background border border-border/50 rounded-lg"
+                        className="w-24 text-sm px-3 py-2 bg-background border border-border/50 rounded-lg"
                         placeholder="Qty"
                       />
                       <button
                         type="submit"
-                        className="flex-1 text-sm font-bold text-white rounded-lg transition-transform hover:scale-[1.02]"
+                        disabled={
+                          !newItem.product_id ||
+                          newItem.quantity >
+                            parseFloat(
+                              products.find((p) => String(p.id) === String(newItem.product_id))
+                                ?.stock_quantity || 0,
+                            )
+                        }
+                        className="flex-1 text-sm font-bold text-white rounded-lg transition-transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
                         style={{ backgroundColor: themeColor }}
                       >
                         Add

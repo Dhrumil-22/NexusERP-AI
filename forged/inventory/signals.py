@@ -37,14 +37,14 @@ def handle_invoice_created(sender, tenant_id, items, **kwargs):
                     threshold=product.reorder_threshold
                 )
                 
-            # Create notification if it just hit 0
-            if old_quantity > 0 and product.stock_quantity <= 0:
+            # Create notification if it just hit the threshold
+            if old_quantity > product.reorder_threshold and product.stock_quantity <= product.reorder_threshold:
                 from notifications.models import Notification
                 Notification.objects.create(
                     tenant_id=tenant_id,
                     notification_type='stock_alert',
-                    title='Product Out of Stock',
-                    message=f'Product "{product.name}" has reached 0 stock.'
+                    title='Product Low Stock Alert',
+                    message=f'Product "{product.name}" has reached its low stock limit ({product.stock_quantity} remaining).'
                 )
         except (ObjectDoesNotExist, Exception):
             pass

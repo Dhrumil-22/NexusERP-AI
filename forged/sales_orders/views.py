@@ -25,6 +25,17 @@ class OrderViewSet(viewsets.ModelViewSet):
             if order.status != 'draft':
                 return Response({'error': 'Order must be in draft status to confirm'}, status=status.HTTP_400_BAD_REQUEST)
                 
+            from inventory.models import Product
+            for item in order.items.all():
+                try:
+                    product = Product.objects.get(id=item.product_id, tenant_id=self.request.user.tenant_id)
+                    if product.stock_quantity < item.quantity:
+                        return Response({
+                            'error': f'Insufficient stock for product {product.name}. Available: {product.stock_quantity}, Requested: {item.quantity}'
+                        }, status=status.HTTP_400_BAD_REQUEST)
+                except Product.DoesNotExist:
+                    pass
+                
             order.status = 'confirmed'
             order.save()
             

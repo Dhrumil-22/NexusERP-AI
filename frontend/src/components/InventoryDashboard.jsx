@@ -131,7 +131,7 @@ export function InventoryDashboard() {
                   <th className="px-4 py-3 font-medium text-right">Price</th>
                   <th className="px-4 py-3 font-medium text-right">Stock</th>
                   <th className="px-4 py-3 font-medium text-right">
-                    Threshold
+                    Limit
                   </th>
                   <th className="px-4 py-3 font-medium text-right rounded-tr-lg">
                     Actions
@@ -387,7 +387,7 @@ function ProductModal({ categories, onClose, onSuccess }) {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold">Reorder Threshold</label>
+              <label className="text-sm font-semibold">Low Stock Limit</label>
               <input
                 required
                 type="number"

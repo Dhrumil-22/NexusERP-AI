@@ -593,8 +593,8 @@ export function TableOrderDashboard() {
                   {products
                     .filter((p) => parseFloat(p.stock_quantity) > 0)
                     .map((p) => (
-                      <option key={p.id} value={p.name}>
-                        {p.name} (₹{Number(p.price).toFixed(2)})
+                      <option key={p.id} value={p.id}>
+                        {p.name} (₹{Number(p.price).toFixed(2)}) - Stock: {p.stock_quantity}
                       </option>
                     ))}
                 </CustomSelect>
@@ -608,13 +608,17 @@ export function TableOrderDashboard() {
                   type="number"
                   required
                   min="1"
+                  max={products.find((p) => String(p.id) === String(newItem.product_id))?.stock_quantity || ""}
                   value={newItem.quantity}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const maxStock = products.find((p) => String(p.id) === String(newItem.product_id))?.stock_quantity;
+                    let val = parseInt(e.target.value);
+                    if (maxStock !== undefined && val > maxStock) val = maxStock;
                     setNewItem({
                       ...newItem,
-                      quantity: parseInt(e.target.value),
-                    })
-                  }
+                      quantity: val || "",
+                    });
+                  }}
                   className="w-full px-3 py-2 bg-muted/30 border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
                 />
               </div>
@@ -629,7 +633,15 @@ export function TableOrderDashboard() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-3 rounded-xl font-bold text-white transition-transform hover:scale-[1.02]"
+                  disabled={
+                    !newItem.product_id ||
+                    newItem.quantity >
+                      parseFloat(
+                        products.find((p) => String(p.id) === String(newItem.product_id))
+                          ?.stock_quantity || 0,
+                      )
+                  }
+                  className="flex-1 px-4 py-3 rounded-xl font-bold text-white transition-transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ backgroundColor: themeColor }}
                 >
                   Add Item
