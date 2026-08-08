@@ -8,15 +8,24 @@ import { API_BASE } from "../config";
 export function KitchenKOTDashboard() {
   const { token, themeColor } = useAuth();
   const [tickets, setTickets] = useState([]);
+  const [products, setProducts] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
 
   const fetchData = async () => {
     setIsFetching(true);
     try {
-      const res = await axios.get(`${API_BASE}/api/kot/tickets/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setTickets(res.data);
+      const [ticketRes, productRes] = await Promise.all([
+        axios.get(`${API_BASE}/api/kot/tickets/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get(`${API_BASE}/api/inventory/products/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }).catch(() => ({ data: [] }))
+      ]);
+      setTickets(ticketRes.data);
+      if (productRes.data.length > 0) {
+        setProducts(productRes.data);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -114,7 +123,7 @@ export function KitchenKOTDashboard() {
                       >
                         <div>
                           <span className="font-bold text-lg">
-                            {item.product_id}
+                            {products.find(p => String(p.id) === String(item.product_id))?.name || item.product_id}
                           </span>
                           {item.notes && (
                             <div className="text-sm text-red-500 font-medium italic">
