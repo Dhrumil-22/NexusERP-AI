@@ -55,7 +55,8 @@ class AttendanceRecordViewSet(viewsets.ModelViewSet):
             record.clock_in = now
             try:
                 emp = Employee.objects.get(id=employee_id)
-                if emp.shift_start_time and now.time() > emp.shift_start_time:
+                local_now_time = timezone.localtime(now).time()
+                if emp.shift_start_time and local_now_time > emp.shift_start_time:
                     record.status = 'Late'
                     is_late = True
             except ObjectDoesNotExist:
