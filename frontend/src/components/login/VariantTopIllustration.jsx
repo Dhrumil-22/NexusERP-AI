@@ -20,8 +20,10 @@ export function VariantTopIllustration({
   const [logoPreview, setLogoPreview] = useState(null);
   const [status, setStatus] = useState("idle");
   const [errorMsg, setErrorMsg] = useState("");
-  const [step, setStep] = useState("credentials"); // "credentials" | "otp"
+  const [step, setStep] = useState("credentials"); // "credentials" | "otp" | "forgot_password" | "forgot_password_otp"
   const [otpInput, setOtpInput] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [maskedEmail, setMaskedEmail] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -39,6 +41,40 @@ export function VariantTopIllustration({
     setStatus("submitting");
 
     try {
+      if (step === "forgot_password") {
+        const response = await axios.post(`${API_BASE}/api/auth/forgot_password_request/`, {
+          username
+        });
+        setMaskedEmail(response.data.email_masked);
+        setStep("forgot_password_otp");
+        setStatus("idle");
+        return;
+      }
+      
+      if (step === "forgot_password_otp") {
+        if (newPassword !== confirmPassword) {
+          setErrorMsg("Passwords do not match.");
+          setStatus("error");
+          return;
+        }
+        
+        await axios.post(`${API_BASE}/api/auth/forgot_password_verify/`, {
+          username,
+          otp: otpInput,
+          new_password: newPassword
+        });
+        
+        // Success
+        setStep("credentials");
+        setStatus("idle");
+        setPassword("");
+        setOtpInput("");
+        setNewPassword("");
+        setConfirmPassword("");
+        alert("Password reset successfully! Please log in with your new password.");
+        return;
+      }
+
       if (isRegistering && step === "credentials") {
         await axios.post(`${API_BASE}/api/auth/register/`, {
           username,
@@ -280,6 +316,10 @@ export function VariantTopIllustration({
             <p className="text-muted-foreground mt-2 font-medium">
               {isRegistering
                 ? "Let's set up your modular business operating system."
+                : step === "forgot_password"
+                ? "Enter your username to reset your password."
+                : step === "forgot_password_otp"
+                ? "Enter your OTP and new password."
                 : "Enter your credentials below."}
             </p>
           </div>
@@ -396,6 +436,144 @@ export function VariantTopIllustration({
                     placeholder="••••••••"
                     disabled={status === "submitting" || status === "success"}
                   />
+                  {!isRegistering && (
+                    <div className="flex justify-end px-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStep("forgot_password");
+                          setErrorMsg("");
+                        }}
+                        className="text-xs text-muted-foreground hover:text-foreground font-medium hover:underline"
+                        disabled={status === "submitting" || status === "success"}
+                      >
+                        Forgot Password?
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : step === "forgot_password" ? (
+              <div className="space-y-6 max-w-md mx-auto animate-fade-in">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-4">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                    autoFocus
+                    className={`flex h-14 w-full rounded-full border border-input bg-card px-6 text-sm shadow-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all ${status === "error" ? "border-destructive" : ""}`}
+                    placeholder="Enter your username"
+                    disabled={status === "submitting" || status === "success"}
+                  />
+                </div>
+                <div className="flex justify-start px-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStep("credentials");
+                      setErrorMsg("");
+                    }}
+                    className="text-xs text-muted-foreground hover:text-foreground font-medium hover:underline"
+                  >
+                    &larr; Back to Login
+                  </button>
+                </div>
+              </div>
+            ) : step === "forgot_password_otp" ? (
+              <div className="space-y-6 max-w-md mx-auto animate-fade-in">
+                <div className="text-center bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-2xl">
+                  <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    Reset Code Sent
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Please check <strong className="font-bold text-foreground">{maskedEmail}</strong> for your 6-digit OTP code.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-4">
+                    Enter 6-Digit OTP
+                  </label>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    value={otpInput}
+                    onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ""))}
+                    required
+                    autoFocus
+                    className="flex h-14 w-full rounded-2xl border-2 border-primary/50 bg-card px-6 text-center text-xl font-black tracking-[8px] shadow-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-primary"
+                    placeholder="••••••"
+                    disabled={status === "submitting" || status === "success"}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-4">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    className="flex h-14 w-full rounded-full border border-input bg-card px-6 text-sm shadow-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    placeholder="Enter new password"
+                    disabled={status === "submitting" || status === "success"}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-4">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    className="flex h-14 w-full rounded-full border border-input bg-card px-6 text-sm shadow-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    placeholder="Confirm new password"
+                    disabled={status === "submitting" || status === "success"}
+                  />
+                </div>
+
+                <div className="flex justify-between items-center text-xs text-muted-foreground px-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStep("forgot_password");
+                      setOtpInput("");
+                      setStatus("idle");
+                      setErrorMsg("");
+                    }}
+                    className="hover:text-foreground underline font-medium"
+                  >
+                    ← Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setErrorMsg("");
+                      setStatus("submitting");
+                      try {
+                        const response = await axios.post(`${API_BASE}/api/auth/forgot_password_request/`, { username });
+                        setMaskedEmail(response.data.email_masked);
+                        setStatus("idle");
+                        alert("A new OTP has been sent to your email!");
+                      } catch (e) {
+                        setStatus("error");
+                        setErrorMsg("Failed to resend OTP.");
+                      }
+                    }}
+                    className="text-primary hover:underline font-bold"
+                  >
+                    Resend OTP Code
+                  </button>
                 </div>
               </div>
             ) : (
@@ -480,6 +658,10 @@ export function VariantTopIllustration({
                   <CheckCircle className="w-5 h-5" />
                 ) : step === "otp" ? (
                   "Verify & Log In"
+                ) : step === "forgot_password" ? (
+                  "Send Reset Code"
+                ) : step === "forgot_password_otp" ? (
+                  "Reset Password"
                 ) : isRegistering ? (
                   "Initialize OS"
                 ) : (

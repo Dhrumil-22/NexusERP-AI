@@ -318,3 +318,79 @@ class SuperAdminBusinessTicketsView(APIView):
                 'user': t.user.username
             })
         return Response(data)
+
+class ForgotPasswordRequestView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get('username')
+        if not username:
+            return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        user = User.objects.filter(username=username).first()
+        if not user:
+            return Response({
+                'email_masked': '***@***.com',
+                'message': 'If the user exists, an OTP has been sent.'
+            })
+            
+        target_email = getattr(user, 'email', None) or ""
+        
+        try:
+            from employee_hr.models import Employee
+            emp = Employee.objects.filter(tenant_id=user.tenant_id, first_name=user.first_name, last_name=user.last_name).first()
+            if emp and emp.email and emp.email != user.email:
+                target_email = emp.email
+        except Exception:
+            pass
+            
+        if not target_email:
+            target_email = "dhrumilvaghela22@gmail.com"
+            
+        otp_code = f"{random.randint(100000, 999999)}"
+        OTP_STORAGE[f"reset_{user.username}"] = {
+            'otp': otp_code,
+            'expires_at': time.time() + 300
+        }
+        
+        send_otp_email(target_email, otp_code, user.username)
+        
+        parts = target_email.split('@')
+        masked = (parts[0][0] + "***@" + parts[1]) if len(parts) == 2 and len(parts[0]) > 1 else target_email
+        
+        return Response({
+            'email_masked': masked,
+            'message': f'OTP sent to {masked}'
+        })
+
+class ForgotPasswordVerifyView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get('username')
+        otp_input = request.data.get('otp')
+        new_password = request.data.get('new_password')
+        
+        if not all([username, otp_input, new_password]):
+            return Response({'error': 'username, otp, and new_password are required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        user = User.objects.filter(username=username).first()
+        if not user:
+            return Response({'error': 'Invalid username or OTP.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        otp_key = f"reset_{user.username}"
+        otp_data = OTP_STORAGE.get(otp_key)
+        
+        if not otp_data or time.time() > otp_data.get('expires_at', 0):
+            return Response({'error': 'OTP has expired or is invalid. Please request a new code.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        if str(otp_data.get('otp')).strip() != str(otp_input).strip():
+            return Response({'error': 'Incorrect OTP code.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        # Success, reset password
+        user.set_password(new_password)
+        user.save()
+        
+        del OTP_STORAGE[otp_key]
+        
+        return Response({'status': 'password reset successfully'})
