@@ -384,7 +384,7 @@ export function TableOrderDashboard() {
                               >
                                 <div>
                                   <div className="font-bold">
-                                    {item.product_id}
+                                    {products.find(p => String(p.id) === String(item.product_id))?.name || item.product_id}
                                   </div>
                                   <div className="text-xs text-muted-foreground uppercase">
                                     {item.status}
