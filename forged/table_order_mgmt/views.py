@@ -93,7 +93,16 @@ class OrderViewSet(viewsets.ModelViewSet):
         table.save()
         
         from inventory.models import Product
-        total = sum((float(Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first().price) if Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first() else 0.0) * float(item.quantity) for item in order.items.all())
+        import uuid
+        
+        def get_product(item_product_id, tenant_id):
+            try:
+                uid = uuid.UUID(item_product_id)
+                return Product.objects.for_tenant(tenant_id).filter(id=uid).first()
+            except ValueError:
+                return Product.objects.for_tenant(tenant_id).filter(name=item_product_id).first()
+
+        total = sum((float(get_product(item.product_id, order.tenant_id).price) if get_product(item.product_id, order.tenant_id) else 0.0) * float(item.quantity) for item in order.items.all())
         
         # Generate SalesOrder if there's a customer
         if order.customer_id:
@@ -108,7 +117,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             items_for_signal = []
             
             for item in order.items.all():
-                product = Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first()
+                product = get_product(item.product_id, order.tenant_id)
                 unit_price = product.price if product else 0.00
                 actual_product_id = str(product.id) if product else item.product_id
                 
@@ -164,10 +173,11 @@ class OrderViewSet(viewsets.ModelViewSet):
                     html_content = f"<h3>Thank you for your visit, {customer_name}!</h3><p>Your total bill was <b>₹{total:.2f}</b>.</p><table style='width:100%; border-collapse: collapse; margin-bottom: 20px;'><tr style='border-bottom: 2px solid #ddd; text-align: left;'><th>Item</th><th>Qty</th><th>Price</th></tr>"
                     
                     for item in order.items.all():
-                        product = Product.objects.for_tenant(order.tenant_id).filter(name=item.product_id).first()
+                        product = get_product(item.product_id, order.tenant_id)
                         unit_price = product.price if product else 0.00
-                        text_content += f"- {item.quantity}x {item.product_id} @ ₹{unit_price:.2f} each\n"
-                        html_content += f"<tr style='border-bottom: 1px solid #eee;'><td>{item.product_id}</td><td>{item.quantity}</td><td>₹{unit_price:.2f}</td></tr>"
+                        product_name = product.name if product else item.product_id
+                        text_content += f"- {item.quantity}x {product_name} @ ₹{unit_price:.2f} each\n"
+                        html_content += f"<tr style='border-bottom: 1px solid #eee;'><td>{product_name}</td><td>{item.quantity}</td><td>₹{unit_price:.2f}</td></tr>"
                         
                     text_content += f"\nTotal: ₹{total:.2f}\n"
                     text_content += f"\nThank you for choosing {business_name}!\n"
