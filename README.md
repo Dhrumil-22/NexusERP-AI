@@ -1,7 +1,11 @@
 <div align="center">
 
-# 🚀 NexusERP-AI
-**The Next-Generation, Self-Architecting Enterprise Resource Planning System**
+<img src="https://capsule-render.vercel.app/api?type=waving&color=092E20&height=200&section=header&text=NexusERP-AI&fontSize=60&animation=twinkling&fontAlignY=35&desc=The%20Next-Generation%20Enterprise%20System&descAlignY=55&descAlign=50" alt="NexusERP-AI Header Animation" />
+
+<!-- Typing SVG Animation -->
+<a href="https://github.com/Dhrumil-22/anti_nexuserp">
+    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=20&pause=1000&color=4EA94B&center=true&vCenter=true&width=600&lines=An+AI-Powered+ERP+System;Dynamically+builds+its+own+architecture;Decoupled+Microservices;Lightning+Fast.+Strict+Logic.+Real-Time." alt="Typing SVG" />
+</a>
 
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
@@ -11,9 +15,13 @@
 [![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
 
-An intelligent, AI-powered ERP system that dynamically builds its own architecture. Designed with a decoupled microservices approach for maximum speed, strict business logic, and real-time operations.
-
 [View Deployment Guide](#-deployment) • [Report Bug](https://github.com/Dhrumil-22/anti_nexuserp/issues) • [Request Feature](https://github.com/Dhrumil-22/anti_nexuserp/issues)
+
+<br/>
+
+<!-- ADD YOUR DEMO GIF HERE -->
+> **💡 Tip:** Replace this block with a screen recording GIF of your app!
+> `<img src="./your-demo.gif" width="800" alt="App Demo"/>`
 
 </div>
 
