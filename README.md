@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=092E20&height=200&section=header&text=NexusERP-AI&fontSize=60&animation=twinkling&fontAlignY=35&desc=The%20Next-Generation%20Enterprise%20System&descAlignY=55&descAlign=50" alt="NexusERP-AI Header Animation" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,8A2BE2,50,4169E1,100,00FFFF&height=200&section=header&text=NexusERP-AI&fontSize=60&fontColor=FFFFFF&animation=twinkling&fontAlignY=35&desc=The%20Next-Generation%20Enterprise%20System&descAlignY=55&descAlign=50" alt="NexusERP-AI Header Animation" />
 
 <!-- Typing SVG Animation -->
 <a href="https://github.com/Dhrumil-22/anti_nexuserp">
-    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=20&pause=1000&color=4EA94B&center=true&vCenter=true&width=600&lines=An+AI-Powered+ERP+System;Dynamically+builds+its+own+architecture;Decoupled+Microservices;Lightning+Fast.+Strict+Logic.+Real-Time." alt="Typing SVG" />
+    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=20&pause=1000&color=00FFFF&center=true&vCenter=true&width=600&lines=An+AI-Powered+ERP+System;Dynamically+builds+its+own+architecture;Decoupled+Microservices;Lightning+Fast.+Strict+Logic.+Real-Time." alt="Typing SVG" />
 </a>
 
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
