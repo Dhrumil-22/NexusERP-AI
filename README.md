@@ -61,6 +61,47 @@ A fast, separate server written in TypeScript specifically to handle high-load t
 
 ---
 
+## 📁 Project Structure
+NexusERP-AI/
+│
+├── 🎨 frontend/ # React + Vite Application
+│ ├── src/
+│ │ ├── components/ # Reusable UI components
+│ │ ├── pages/ # Route-level page components
+│ │ ├── hooks/ # Custom React hooks
+│ │ ├── services/ # Axios API calls
+│ │ └── main.jsx # App entry point
+│ ├── public/
+│ ├── index.html
+│ └── package.json
+│
+├── ⚙️ forged/ # Django Core Backend
+│ ├── core/ # Main Django app
+│ │ ├── models.py # Database models
+│ │ ├── views.py # API views
+│ │ ├── serializers.py # DRF serializers
+│ │ └── urls.py # Route definitions
+│ ├── manage.py
+│ └── requirements.txt
+│
+├── ⚡ express_app/ # Node.js AI Microservice
+│ ├── src/
+│ │ ├── routes/ # Express route handlers
+│ │ ├── controllers/ # Business logic
+│ │ ├── services/ # AI & Socket.io services
+│ │ └── index.ts # Server entry point
+│ └── package.json
+│
+├── express_service/ # Additional Express Services
+│
+├── .agents/workflows/ # AI Agent Workflow Configs
+│
+├── 📄 deployment_guide.md # Full deployment instructions
+├── 📄 TECH_STACK.md # Detailed tech stack breakdown
+├── 📄 ERP_TYPES.md # ERP module type definitions
+├── start_servers.bat # Windows one-click startup script
+└── README.md
+
 ## 🚀 How to Run Locally
 
 ### Prerequisites
